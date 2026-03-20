@@ -1,0 +1,52 @@
+﻿using Logic.Administration.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Enums;
+using Shared.Models.User;
+
+namespace Service.Api.ApiContrillers.UserAdministration
+{
+    public class UserAdministrationController : ApiControllerBase
+    {
+        private readonly IUserAdministration _userAdministration;
+
+        public UserAdministrationController(IUserAdministration userAdministration)
+        {
+            _userAdministration = userAdministration;
+        }
+
+        [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
+        [HttpGet(Name = "GetUsers")]
+        public async Task<IEnumerable<UserModel>> GetUsers([FromQuery] bool includeCredentials)
+        {
+            return await _userAdministration.GetUsers(includeCredentials);
+        }
+
+        [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
+        [HttpGet(Name = "GetUserById")]
+        public async Task<UserModel?> GetUserById([FromQuery] int userId, bool includeCredentials)
+        {
+            return await _userAdministration.GetUserById(userId, includeCredentials);
+        }
+
+        [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
+        [HttpPost(Name = "CreateUser")]
+        public async Task CreateUser([FromBody] UserModel userModel)
+        {
+            await _userAdministration.CreateUser(userModel);
+        }
+
+        [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
+        [HttpPost(Name = "UpdateUser")]
+        public async Task UpdateUser([FromBody] UserModel userModel, [FromQuery] bool updateCredentials)
+        {
+            await _userAdministration.UpdateUser(userModel, updateCredentials);
+        }
+
+        [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
+        [HttpPost(Name = "DeleteUser")]
+        public async Task DeleteUser([FromQuery] int userId)
+        {
+            await _userAdministration.DeleteUser(userId);
+        }
+    }
+}

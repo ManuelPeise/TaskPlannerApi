@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/01 Web/">
+    <Project Path="Core.Api/Core.Api.csproj" />
+  </Folder>
+  <Folder Name="/02 Service/">
+    <Project Path="Service.Api/Service.Api.csproj" />
+  </Folder>
+  <Folder Name="/03 Logic/">
+    <Project Path="Logic.Administration/Logic.Administration.csproj" />
+    <Project Path="Logic.Shared/Logic.Shared.csproj" />
+  </Folder>
+  <Folder Name="/04 Data/">
+    <Project Path="Data.Accessor/Data.Accessor.csproj" />
+    <Project Path="Data.Database/Data.Database.csproj" />
+    <Project Path="Data.Entities/Data.Entities.csproj" />
+  </Folder>
+  <Folder Name="/05 Shared/">
+    <Project Path="Shared.Enums/Shared.Enums.csproj" />
+    <Project Path="Shared.Interfaces/Shared.Interfaces.csproj" />
+    <Project Path="Shared.Models/Shared.Models.csproj" />
+  </Folder>
+</Solution>
