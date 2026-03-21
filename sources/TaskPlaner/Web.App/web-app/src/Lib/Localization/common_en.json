@@ -1,0 +1,10 @@
+{
+  "labelAuthorize": "Authorize",
+  "labelLogin": "Login",
+  "labelLogout": "Logout",
+  "titleLogin": "Login to Task Planner",
+  "labelEmail": "Email",
+  "labelPassword": "Password",
+  "labelCancel": "Cancel",
+  "labelLoginToAccount": "Login to your account"
+}
