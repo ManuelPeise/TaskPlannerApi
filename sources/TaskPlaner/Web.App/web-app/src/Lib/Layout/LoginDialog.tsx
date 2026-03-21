@@ -5,7 +5,7 @@ import {
   DialogTitle,
   Grid,
 } from "@mui/material";
-import React, { use } from "react";
+import React from "react";
 import { useLocalization } from "../../Hooks/useLocalization";
 import { IAuthenticationRequestModel } from "../../Context/AuthContextProvider";
 import FormTextInput from "../../Components/FormTextInput";
@@ -21,24 +21,20 @@ interface IProps {
 
 export const LoginDialog: React.FC<IProps> = (props) => {
   const { open, onClose } = props;
-  const { onLogin } = useAuth();
+  const { isLoading, onLogin } = useAuth();
   const { getResource } = useLocalization();
-
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const submitCallback = React.useCallback(
     async (model: IAuthenticationRequestModel) => {
-      setIsLoading(true);
       await onLogin(model.emailAddress, model.password);
       onClose();
-      setIsLoading(false);
     },
     [onLogin, onClose],
   );
 
   const { model, handleChange, resetForm, handleSubmit } =
     useForm<IAuthenticationRequestModel>(
-      { emailAddress: "", password: "" },
+      { emailAddress: "admin.user@app.com", password: "Password" },
       submitCallback,
     );
 
@@ -49,7 +45,7 @@ export const LoginDialog: React.FC<IProps> = (props) => {
 
   return (
     <Dialog
-      keepMounted
+      keepMounted={open}
       open={open}
       onClose={onClose}
       maxWidth="sm"
@@ -59,6 +55,7 @@ export const LoginDialog: React.FC<IProps> = (props) => {
       <DialogTitle>{getResource("titleLogin")}</DialogTitle>
       <DialogContent sx={{ padding: 4 }}>
         <Grid container spacing={2} direction="column">
+          {isLoading && <LoadingIndicator isLoading={isLoading} />}
           <Grid size={12} alignItems="center" justifyContent="center">
             {isLoading && <LoadingIndicator isLoading={isLoading} />}
           </Grid>

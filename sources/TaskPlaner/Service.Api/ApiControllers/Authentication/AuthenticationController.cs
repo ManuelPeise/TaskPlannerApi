@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models.Administartion;
 
-namespace Service.Api.ApiContrillers.Authentication
+namespace Service.Api.ApiControllers.Authentication
 {
     public class AuthenticationController : ApiControllerBase
     {

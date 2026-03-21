@@ -7,6 +7,7 @@ using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace Service.Api
@@ -26,7 +27,7 @@ namespace Service.Api
                 return;
             }
 
-            var authHeader = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var authHeader = context.HttpContext.Request.Headers["Authentication"].FirstOrDefault();
 
             if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer "))
             {
@@ -44,17 +45,23 @@ namespace Service.Api
                 return;
             }
 
-            if (!ValidateJwtToken(token, jwtModel))
+            var principal = ValidateJwtToken(token, jwtModel);
+
+            if (principal == null)
             {
                 context.Result = new UnauthorizedResult();
+                return;
             }
+
+            // Hier wird die authentifizierte Identity gesetzt
+            context.HttpContext.User = principal;
 
             if (UserRole == UserRoleEnum.None)
             {
                 return;
             }
 
-            var userRoleClaim = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "user_role")?.Value;
+            var userRoleClaim = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
             if (userRoleClaim == null || !Enum.TryParse<UserRoleEnum>(userRoleClaim, out var userRole) || userRole != UserRole)
             {
@@ -62,30 +69,33 @@ namespace Service.Api
             }
         }
 
-        private bool ValidateJwtToken(string token, dynamic jwtModel)
+        private ClaimsPrincipal? ValidateJwtToken(string token, dynamic jwtModel)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(jwtModel.SecurityKey);
 
             try
             {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuer = false, // Set to true and provide ValidIssuer if needed
-                    ValidateAudience = true,
-                    ValidAudience = jwtModel.Audience,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
+                var principal = tokenHandler.ValidateToken(
+                    token,
+                    new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = true,
+                        ValidAudience = jwtModel.Audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
+                    },
+                    out SecurityToken validatedToken);
 
-                return true;
+                return principal;
             }
             catch
             {
-                // Optionally log exception here
-                return false;
+                // Optional: Logging
+                return null;
             }
         }
     }

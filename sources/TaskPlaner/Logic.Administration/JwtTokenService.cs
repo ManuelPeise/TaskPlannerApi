@@ -122,11 +122,10 @@ namespace Logic.Administration
         {
             return new List<Claim>
             {
-                new Claim("user_id", user.Id.ToString()),
-                new Claim("user_name", user.EmailAddress),
-                new Claim("email_address", user.EmailAddress),
-                new Claim("user_role", user.UserRole.ToString()),
-                new Claim("expire_time", DateTime.UtcNow.AddHours(1).ToString("o"))
+                new Claim(ClaimTypes.Name, user.EmailAddress),
+                new Claim(ClaimTypes.Email, user.EmailAddress),
+                new Claim(ClaimTypes.Role, user.UserRole.ToString()),
+                new Claim(ClaimTypes.Expiration, DateTime.UtcNow.AddHours(1).ToString("o"))
             };
         }
     }

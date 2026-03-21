@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/01 Web/">
     <Project Path="Core.Api/Core.Api.csproj" />
+    <Project Path="Web.App/Web.App.csproj" />
   </Folder>
   <Folder Name="/02 Service/">
     <Project Path="Service.Api/Service.Api.csproj" />

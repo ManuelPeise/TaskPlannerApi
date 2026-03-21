@@ -1,19 +1,38 @@
 ﻿using Logic.Administration.Interfaces;
+using Logic.Shared;
 using Logic.Shared.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Shared.Enums;
 using Shared.Models.User;
 
 namespace Logic.Administration
 {
-    public class UserAdministration : IUserAdministration
+    public class UserAdministration : LogicBase, IUserAdministration
     {
         private readonly ILogger<UserAdministration> _logger;
         private readonly IUserUnitOfWork _userUnitOfWork;
 
-        public UserAdministration(ILogger<UserAdministration> logger, IUserUnitOfWork userUnitOfWork)
+        public UserAdministration(
+            ILogger<UserAdministration> logger, 
+            IHttpContextAccessor httpContextAccessor,
+            IUserUnitOfWork userUnitOfWork):base(httpContextAccessor, userUnitOfWork)
         {
             _logger = logger;
             _userUnitOfWork = userUnitOfWork;
+        }
+
+        public async Task<UserModel?> GetCurrentUser()
+        {
+            try
+            {
+                return CurrentUser ?? throw new UnauthorizedAccessException();
+            }
+            catch (Exception exception)
+            {
+                await _logger.LogMessageAsync("An error occurred while loading current user.", LogMessageTypeEnum.Error, exception);
+
+                return null;
+            }
         }
 
         public async Task<IEnumerable<UserModel>> GetUsers(bool includeCredentials)

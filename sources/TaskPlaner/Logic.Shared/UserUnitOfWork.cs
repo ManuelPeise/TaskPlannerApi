@@ -2,6 +2,7 @@
 using Data.Accessor.Interfaces;
 using Data.Database;
 using Data.Entities;
+using Data.Entities.Administration;
 using Data.Entities.User;
 using Logic.Shared.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -16,27 +17,30 @@ namespace Logic.Shared
         private readonly HttpContext _httpContext;
 
         private readonly IDbRepositoryBase<UserEntity> _userRepository;
-        private readonly IDbRepositoryBase<UserCredentialsEntity> _userCredentialsRepository;
-
-        private readonly Func<IQueryable<UserEntity>, IQueryable<UserEntity>>[] includeCredentialsExpression = { q => q.Include(u => u.Credentials) };
+        private readonly IDbRepositoryBase<UserAccessRightEntity> _userAccessRightRepository;
+        private readonly Func<IQueryable<UserEntity>, IQueryable<UserEntity>>[] includeExpression = { q => q.Include(u => u.Credentials), a => a.Include(u => u.AccessRights).ThenInclude(ur => ur.AccessRight) };
 
         public UserUnitOfWork(DatabaseContext databaseContext, IHttpContextAccessor httpContextAccessor)
         {
             _databaseContext = databaseContext;
             _httpContext = httpContextAccessor.HttpContext;
             _userRepository = new DbRepositoryBase<UserEntity>(_databaseContext);
-            _userCredentialsRepository = new DbRepositoryBase<UserCredentialsEntity>(_databaseContext);
+            _userAccessRightRepository = new DbRepositoryBase<UserAccessRightEntity>(_databaseContext);
         }
 
-        public async Task<IEnumerable<UserModel>> GetUsers(bool includeCredentials)
+        public async Task<IEnumerable<UserModel>> GetUsers(bool include)
         {
-            var userEntities = await _userRepository.GetAll(false, includes: includeCredentials ? includeCredentialsExpression : null);
+            var userEntities = await _userRepository.GetAll(false, include ? includeExpression : null);
 
             if (!userEntities.Any())
             {
                 return Enumerable.Empty<UserModel>();
             }
 
+            foreach (var userEntity in userEntities)
+            {
+
+            }
             return userEntities.Select(e => new UserModel
             {
                 Id = e.Id,
@@ -45,8 +49,8 @@ namespace Logic.Shared
                 EmailAddress = e.EmailAddress,
                 IsActive = e.IsActive,
                 UserRole = e.UserRole,
-                CredentialsId = includeCredentials ? e.CredentialsId : null,
-                Credentials = includeCredentials ? new UserCredentialsModel
+                CredentialsId = include ? e.CredentialsId : null,
+                Credentials = include ? new UserCredentialsModel
                 {
                     Id = e.Credentials?.Id ?? 0,
                     PasswordHash = e.Credentials?.PasswordHash ?? string.Empty,
@@ -57,6 +61,21 @@ namespace Logic.Shared
                     UpdatedBy = e.Credentials?.UpdatedBy ?? string.Empty
 
                 } : null,
+                AccessRights = include ? e.AccessRights.Select(ar => new AccessRightModel
+                {
+                    Id = ar.Id,
+                    Name = ar.AccessRight.Name,
+                    Deny = ar.Deny,
+                    CanCreate = ar.CanCreate,
+                    CanView = ar.CanView,
+                    CanEdit = ar.CanEdit,
+                    CanDelete = ar.CanDelete,
+                    IsActive = ar.IsActive,
+                    CreatedAt = ar.CreatedAt,
+                    CreatedBy = ar.CreatedBy,
+                    UpdatedAt = ar.UpdatedAt,
+                    UpdatedBy = ar.UpdatedBy
+                }).ToList() : new List<AccessRightModel>(),
                 CreatedBy = e.CreatedBy,
                 CreatedAt = e.CreatedAt,
                 UpdatedBy = e.UpdatedBy,
@@ -64,9 +83,9 @@ namespace Logic.Shared
             });
         }
 
-        public async Task<UserModel?> GetUserById(int userId, bool includeCredentials)
+        public async Task<UserModel?> GetUserById(int userId, bool include)
         {
-            var userEntities = await _userRepository.GetById(userId, false, includes: includeCredentials ? includeCredentialsExpression : null);
+            var userEntities = await _userRepository.GetById(userId, false, includes: include ? includeExpression : null);
 
             if (!userEntities.Any() || userEntities.Count > 1)
             {
@@ -88,8 +107,8 @@ namespace Logic.Shared
                 EmailAddress = userEntity.EmailAddress,
                 IsActive = userEntity.IsActive,
                 UserRole = userEntity.UserRole,
-                CredentialsId = includeCredentials ? userEntity.CredentialsId : 0,
-                Credentials = includeCredentials ? new UserCredentialsModel
+                CredentialsId = include ? userEntity.CredentialsId : 0,
+                Credentials = include ? new UserCredentialsModel
                 {
                     Id = userEntity.Credentials?.Id ?? 0,
                     PasswordHash = userEntity.Credentials?.PasswordHash ?? string.Empty,
@@ -99,6 +118,21 @@ namespace Logic.Shared
                     UpdatedAt = userEntity.Credentials?.UpdatedAt ?? DateTime.MinValue,
                     UpdatedBy = userEntity.Credentials?.UpdatedBy ?? string.Empty
                 } : null,
+                AccessRights = include ? userEntity.AccessRights.Select(ar => new AccessRightModel
+                {
+                    Id = ar.Id,
+                    Name = ar.AccessRight.Name,
+                    Deny = ar.Deny,
+                    CanCreate = ar.CanCreate,
+                    CanView = ar.CanView,
+                    CanEdit = ar.CanEdit,
+                    CanDelete = ar.CanDelete,
+                    IsActive = ar.IsActive,
+                    CreatedAt = ar.CreatedAt,
+                    CreatedBy = ar.CreatedBy,
+                    UpdatedAt = ar.UpdatedAt,
+                    UpdatedBy = ar.UpdatedBy
+                }).ToList() : new List<AccessRightModel>(),
                 CreatedBy = userEntity.CreatedBy,
                 CreatedAt = userEntity.CreatedAt,
                 UpdatedBy = userEntity.UpdatedBy,
@@ -106,9 +140,9 @@ namespace Logic.Shared
             };
         }
 
-        public async Task<UserModel?> GetUserByEmail(string email, bool includeCredentials)
+        public async Task<UserModel?> GetUserByEmail(string email, bool include)
         {
-            var userEntities = await _userRepository.GetBy(e => e.EmailAddress == email, false, includes: includeCredentials ? includeCredentialsExpression : null);
+            var userEntities = await _userRepository.GetBy(e => e.EmailAddress == email, false, includes: include ? includeExpression : null);
 
             if (!userEntities.Any() || userEntities.Count > 1)
             {
@@ -130,8 +164,8 @@ namespace Logic.Shared
                 EmailAddress = userEntity.EmailAddress,
                 IsActive = userEntity.IsActive,
                 UserRole = userEntity.UserRole,
-                CredentialsId = includeCredentials ? userEntity.CredentialsId : 0,
-                Credentials = includeCredentials ? new UserCredentialsModel
+                CredentialsId = include ? userEntity.CredentialsId : 0,
+                Credentials = include ? new UserCredentialsModel
                 {
                     Id = userEntity.Credentials?.Id ?? 0,
                     PasswordHash = userEntity.Credentials?.PasswordHash ?? string.Empty,
@@ -141,6 +175,21 @@ namespace Logic.Shared
                     UpdatedAt = userEntity.Credentials?.UpdatedAt ?? DateTime.MinValue,
                     UpdatedBy = userEntity.Credentials?.UpdatedBy ?? string.Empty
                 } : null,
+                AccessRights = include ? userEntity.AccessRights.Select(ar => new AccessRightModel
+                {
+                    Id = ar.Id,
+                    Name = ar.AccessRight.Name,
+                    Deny = ar.Deny,
+                    CanCreate = ar.CanCreate,
+                    CanView = ar.CanView,
+                    CanEdit = ar.CanEdit,
+                    CanDelete = ar.CanDelete,
+                    IsActive = ar.IsActive,
+                    CreatedAt = ar.CreatedAt,
+                    CreatedBy = ar.CreatedBy,
+                    UpdatedAt = ar.UpdatedAt,
+                    UpdatedBy = ar.UpdatedBy
+                }).ToList() : new List<AccessRightModel>(),
                 CreatedBy = userEntity.CreatedBy,
                 CreatedAt = userEntity.CreatedAt,
                 UpdatedBy = userEntity.UpdatedBy,
@@ -170,7 +219,7 @@ namespace Logic.Shared
 
         public async Task UpdateUser(UserModel user, bool updateCredentials)
         {
-            var userEntities = await _userRepository.GetById(user.Id, false, includes: includeCredentialsExpression);
+            var userEntities = await _userRepository.GetById(user.Id, false, includes: includeExpression);
 
             if (userEntities == null || userEntities.Count > 1)
             {

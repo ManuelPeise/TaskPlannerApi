@@ -25,11 +25,14 @@ const useForm = <TModel>(
 
   const subscribe = React.useCallback(() => {
     return { ...model };
-  }, []);
+  }, [model]);
 
-  const subscribeProperty = React.useCallback((key: keyof TModel) => {
-    return model[key];
-  }, []);
+  const subscribeProperty = React.useCallback(
+    (key: keyof TModel) => {
+      return model[key];
+    },
+    [model],
+  );
 
   const resetForm = React.useCallback(() => {
     setModel(initialValues ?? ({} as TModel));

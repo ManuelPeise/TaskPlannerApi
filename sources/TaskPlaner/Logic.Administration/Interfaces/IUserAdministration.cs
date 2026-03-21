@@ -5,6 +5,7 @@ namespace Logic.Administration.Interfaces
     public interface IUserAdministration
     {
         Task<IEnumerable<UserModel>> GetUsers(bool includeCredentials);
+        Task<UserModel?> GetCurrentUser();
         Task<UserModel?> GetUserById(int userId, bool includeCredentials);
         Task CreateUser(UserModel userModel);
         Task UpdateUser(UserModel userModel, bool updateCredentials);
