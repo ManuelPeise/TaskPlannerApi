@@ -1,69 +1,52 @@
 import React from "react";
-import useLocalStorage, { LocalStorageKeys } from "./useLocalStorage";
 
 interface IUseApiOptions {
-    requestUrl: string;
-    method: "GET" | "POST" | "PUT" | "DELETE";
-    model?: any;
+  requestUrl: string;
+  method: "GET" | "POST" | "PUT" | "DELETE";
+  model?: any;
+  token?: string | null;
 }
 
-const useApi = <TResponse>(options: IUseApiOptions) => {
-    const [data, setData] = React.useState<TResponse | null>(null);
-    const [error, setError] = React.useState<string | null>(null);
-    const [loading, setLoading] = React.useState<boolean>(false);
+const useApi = <TResponse>() => {
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
-    const storage = useLocalStorage<string>(LocalStorageKeys.Token);
+  const sendRequest = React.useCallback(
+    async (apiOptions: IUseApiOptions): Promise<TResponse | null> => {
+      let responseJson: TResponse | null = null;
+      try {
+        setLoading(true);
 
-    const sendRequest = React.useCallback(async (apiOptions?: IUseApiOptions) =>{
-        try{
+        const headers = {
+          "Content-Type": "application/json",
+          Authentication: `Bearer ${apiOptions.token}`,
+        };
 
-            let requestOptions = options;
-            
-            if(apiOptions){
-                requestOptions = {...options, ...apiOptions};
-            }
-           
-            setLoading(true);
+        const response = await fetch(apiOptions.requestUrl, {
+          method: apiOptions.method,
+          mode: "cors",
+          headers: headers,
+          body: apiOptions.model ? JSON.stringify(apiOptions.model) : null,
+        });
 
-            await fetch(requestOptions.requestUrl, {
-                method: requestOptions.method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authentication": storage.data ? `Bearer ${storage.data}` : ""
-                },
-                body: requestOptions.model ? JSON.stringify(requestOptions.model) : null
-            }).then(async res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-
-                const responseData = await res.json();
-
-                if(responseData){
-                    const model: TResponse = JSON.parse(JSON.stringify(responseData)) as TResponse;
-                    setData(model);
-                }
-               
-            })
-        }catch(err){
-            setError(err instanceof Error ? err.message : "An unknown error occurred");
-        }finally{
-            setLoading(false);
+        if (response.status === 200) {
+          responseJson = await response.json();
+          console.log("API response:", responseJson);
         }
-    }, [options]);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred",
+        );
+      } finally {
+        setLoading(false);
+      }
 
-    React.useEffect(() => {
-        if(options.method === "GET"){
-            const sendRequestAsync = async () => {
-                await sendRequest();
-            }
+      return responseJson;
+    },
+    [],
+  );
 
-            sendRequestAsync();
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[]);
-
-    return { data, error, loading, sendRequest };
-}
+  return { error, loading, sendRequest };
+};
 
 export default useApi;

@@ -16,7 +16,7 @@ interface IProps {
 
 const AppHeaderBar: React.FC<IProps> = (props) => {
   const { handleOpenLoginDialog } = props;
-  const { isAuthenticated, emailAddress, onLogout } = useAuth();
+  const { isAuthenticated, currentUser, onLogout } = useAuth();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { getResource } = useLocalization();
@@ -53,12 +53,13 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
             <Button
               color="inherit"
               onClick={
-                emailAddress
+                currentUser?.emailAddress
                   ? (event) => setAnchorEl(event.currentTarget)
                   : handleOpenLogin
               }
             >
-              {emailAddress ?? getResource("common.labelAuthorize")}
+              {currentUser?.emailAddress ??
+                getResource("common.labelAuthorize")}
             </Button>
             <Menu
               anchorEl={anchorEl}

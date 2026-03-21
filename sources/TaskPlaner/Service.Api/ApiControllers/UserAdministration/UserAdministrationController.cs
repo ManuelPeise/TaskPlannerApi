@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.Enums;
 using Shared.Models.User;
 
-namespace Service.Api.ApiContrillers.UserAdministration
+namespace Service.Api.ApiControllers.UserAdministration
 {
     public class UserAdministrationController : ApiControllerBase
     {
@@ -16,16 +16,23 @@ namespace Service.Api.ApiContrillers.UserAdministration
 
         [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
         [HttpGet(Name = "GetUsers")]
-        public async Task<IEnumerable<UserModel>> GetUsers([FromQuery] bool includeCredentials)
+        public async Task<IEnumerable<UserModel>> GetUsers([FromQuery] bool include)
         {
-            return await _userAdministration.GetUsers(includeCredentials);
+            return await _userAdministration.GetUsers(include);
+        }
+
+        [JwtAuthentication()]
+        [HttpPost(Name = "LoadCurrentUser")]
+        public async Task<UserModel?> LoadCurrentUser()
+        {
+            return await _userAdministration.GetCurrentUser();
         }
 
         [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
         [HttpGet(Name = "GetUserById")]
-        public async Task<UserModel?> GetUserById([FromQuery] int userId, bool includeCredentials)
+        public async Task<UserModel?> GetUserById([FromQuery] int userId, bool include)
         {
-            return await _userAdministration.GetUserById(userId, includeCredentials);
+            return await _userAdministration.GetUserById(userId, include);
         }
 
         [JwtAuthentication(UserRole = UserRoleEnum.Admin)]

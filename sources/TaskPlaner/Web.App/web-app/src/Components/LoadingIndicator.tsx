@@ -14,7 +14,16 @@ const LoadingIndicator: React.FC<IProps> = (props) => {
 
   return (
     <Box sx={{ position: "fixed", top: 0, left: 0, right: 0 }}>
-      <LinearProgress variant="indeterminate" color="secondary" />
+      <LinearProgress
+        variant="indeterminate"
+        sx={{
+          height: 6,
+          backgroundColor: "#eee",
+          "& .MuiLinearProgress-bar": {
+            background: "#FFD580", // light orange
+          },
+        }}
+      />
     </Box>
   );
 };

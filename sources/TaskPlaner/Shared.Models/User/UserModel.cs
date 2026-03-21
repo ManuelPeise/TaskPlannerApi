@@ -12,6 +12,7 @@ namespace Shared.Models.User
         public UserRoleEnum UserRole { get; set; }
         public int? CredentialsId { get; set; }
         public UserCredentialsModel? Credentials { get; set; }
+        public List<AccessRightModel> AccessRights { get; set; } = new List<AccessRightModel>();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string CreatedBy { get; set; } = string.Empty;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
