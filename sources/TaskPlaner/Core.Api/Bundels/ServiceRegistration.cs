@@ -1,7 +1,5 @@
 ﻿using Data.Database;
 using Logic.Administration.DI;
-using Logic.Shared;
-using Logic.Shared.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +7,8 @@ using Shared.Models.Administartion;
 using System.Text;
 using Microsoft.OpenApi;
 using Shared.Models.User;
+using Logic.Shared.DI;
+using Shared.Models.Email;
 
 namespace Core.Api.Bundels
 {
@@ -18,6 +18,8 @@ namespace Core.Api.Bundels
         {
             services.Configure<JwtTokenModel>(configuration.GetSection("Jwt"));
             services.Configure<UserModel>(configuration.GetSection("DefaultAdminUser"));
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            services.Configure<ApiOptions>(configuration.GetSection("ApiOptions"));
 
             var connectionString = configuration.GetConnectionString("TaskPlannerDb") ?? null;
 
@@ -27,9 +29,8 @@ namespace Core.Api.Bundels
             } 
 
             services.AddDbContext<DatabaseContext>(options => options.UseMySQL(connectionString));
-            services.AddScoped(typeof(Logic.Shared.Interfaces.ILogger<>), typeof(Logic.Shared.Logger<>));
-            services.AddScoped<IUserUnitOfWork, UserUnitOfWork>();
 
+            services.AddSharedServices();
             services.AddAdministrationServices();
 
             services.AddControllers();
