@@ -2,7 +2,10 @@
 using Logic.Shared;
 using Logic.Shared.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Shared.Enums;
+using Shared.Models.Administartion;
+using Shared.Models.Email;
 using Shared.Models.User;
 
 namespace Logic.Administration
@@ -11,14 +14,19 @@ namespace Logic.Administration
     {
         private readonly ILogger<UserAdministration> _logger;
         private readonly IUserUnitOfWork _userUnitOfWork;
-
+        private readonly IEmailClient _emailClient;
+        private readonly ApiOptions _apiOptions;
         public UserAdministration(
             ILogger<UserAdministration> logger, 
             IHttpContextAccessor httpContextAccessor,
-            IUserUnitOfWork userUnitOfWork):base(httpContextAccessor, userUnitOfWork)
+            IUserUnitOfWork userUnitOfWork,
+            IEmailClient emailClient,
+            IOptions<ApiOptions> apiOptions) :base(httpContextAccessor, userUnitOfWork)
         {
             _logger = logger;
             _userUnitOfWork = userUnitOfWork;
+            _emailClient = emailClient;
+            _apiOptions = apiOptions.Value;
         }
 
         public async Task<UserModel?> GetCurrentUser()
@@ -70,7 +78,16 @@ namespace Logic.Administration
 
                 await _userUnitOfWork.SaveChangesAsync();
 
-                // TODO: Send email to the user with their credentials.
+                var userEntity = await _userUnitOfWork.GetUserByEmail(userModel.EmailAddress, false);
+                
+                if (userEntity != null)
+                {
+                    var link = $"{_apiOptions.UiBaseAddress}/account/activateAccount?userId={userEntity.Id}";
+
+                    var emailContent = CreateAccountActivationEmailContent($"{userEntity.Name} {userEntity.LastName}", userEntity.EmailAddress, link);
+
+                    await _emailClient.SendMail(emailContent, userEntity.EmailAddress);
+                }
             }
             catch (Exception exception)
             {
@@ -103,6 +120,25 @@ namespace Logic.Administration
             {
                 await _logger.LogMessageAsync("An error occurred while deleting user.", LogMessageTypeEnum.Error, exception);
             }
+        }
+
+        private EmailContent CreateAccountActivationEmailContent(string fullName, string customerMailAddress, string resetLink)
+        {
+            var content = new EmailContent
+            {
+                Subject = "Your TaskPlanner account",
+                Text = $@"
+<p>Dear {fullName},</p>
+<p>Your account for <b>TaskPlanner</b> has been created.</p>
+<p><b>Email:</b> {customerMailAddress}</p>
+<p>Please set your password using the link below:</p>
+<p><a href='{resetLink}'>Set Password</a></p>
+<p>Best regards,<br/>TaskPlanner Team</p>
+"
+            };
+
+            return content;
+
         }
     }
 }
