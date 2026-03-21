@@ -1,4 +1,5 @@
 ﻿using Data.Database;
+using Data.Entities.Administration;
 using Data.Entities.User;
 using Logic.Administration.Interfaces;
 using Logic.Shared;
@@ -44,7 +45,7 @@ namespace Core.Api.Bundels
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-             
+
                 var defaultAdminUserOptions = scope.ServiceProvider.GetRequiredService<IOptions<UserModel>>();
 
                 var defaultAdminUser = defaultAdminUserOptions.Value;
@@ -69,9 +70,32 @@ namespace Core.Api.Bundels
                         {
                             PasswordHash = PasswordHasher.HashPassword(defaultAdminUser.Credentials?.PasswordHash),
                             RefreshToken = defaultAdminUser.Credentials?.RefreshToken ?? string.Empty
+                        },
+                        AccessRights = new List<UserAccessRightEntity>
+                        {
+                                new UserAccessRightEntity
+                                {
+                                    AccessRightId = 1,
+                                    Deny = false,
+                                    CanCreate = true,
+                                    CanView = true,
+                                    CanEdit = true,
+                                    CanDelete = true,
+                                    IsActive = true
+                                },
+                                new UserAccessRightEntity
+                                {
+                                    AccessRightId = 2,
+                                    Deny = false,
+                                    CanCreate = true,
+                                    CanView = true,
+                                    CanEdit = true,
+                                    CanDelete = true,
+                                    IsActive = true
+                                }
                         }
                     });
-                   
+
                     db.SaveChanges();
                 }
             }
