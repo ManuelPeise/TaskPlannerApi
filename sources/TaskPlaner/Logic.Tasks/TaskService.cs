@@ -92,7 +92,7 @@ namespace Logic.Tasks
             
             var users = await _userUnitOfWork.GetUsers(false, false);
             
-            dropdownItems.AddRange(users.Select(user => new DropdownItem
+            dropdownItems.AddRange(users.Where(user => user.IsActive).Select(user => new DropdownItem
             {
                 Id = user.Id,
                 Label = $"{user.Name} {user.LastName}"
