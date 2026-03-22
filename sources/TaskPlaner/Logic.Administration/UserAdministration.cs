@@ -14,8 +14,7 @@ namespace Logic.Administration
     {
         private readonly ILogger<UserAdministration> _logger;
         private readonly IUserUnitOfWork _userUnitOfWork;
-        private readonly IEmailClient _emailClient;
-        private readonly ApiOptions _apiOptions;
+
         public UserAdministration(
             ILogger<UserAdministration> logger, 
             IHttpContextAccessor httpContextAccessor,
@@ -25,8 +24,6 @@ namespace Logic.Administration
         {
             _logger = logger;
             _userUnitOfWork = userUnitOfWork;
-            _emailClient = emailClient;
-            _apiOptions = apiOptions.Value;
         }
 
         public async Task<UserModel?> GetCurrentUser()

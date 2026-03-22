@@ -2,7 +2,7 @@
 
 namespace Data.Entities.Git
 {
-    public class GitRepositoryEntity:AEntityBase
+    public class GitRepositoryEntity : AEntityBase
     {
         public int Url { get; set; }
         public string Name { get; set; } = string.Empty;

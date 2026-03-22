@@ -9,6 +9,7 @@
   <Folder Name="/03 Logic/">
     <Project Path="Logic.Administration/Logic.Administration.csproj" />
     <Project Path="Logic.Shared/Logic.Shared.csproj" />
+    <Project Path="Logic.Tasks/Logic.Tasks.csproj" Id="195e05b9-9f12-4354-8d83-3888dd4b7a5a" />
   </Folder>
   <Folder Name="/04 Data/">
     <Project Path="Data.Accessor/Data.Accessor.csproj" />

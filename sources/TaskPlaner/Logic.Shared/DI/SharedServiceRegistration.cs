@@ -9,6 +9,7 @@ namespace Logic.Shared.DI
         {
             services.AddScoped(typeof(ILogger<>), typeof(Logger<>));
             services.AddScoped<IUserUnitOfWork, UserUnitOfWork>();
+            services.AddScoped<ITaskUnitOfWork, TaskUnitOfWork>();
             services.AddScoped<IEmailClient, EmailClient>();
         }
     }
