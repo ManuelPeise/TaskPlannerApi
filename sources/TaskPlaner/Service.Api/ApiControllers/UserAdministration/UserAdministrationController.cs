@@ -1,5 +1,6 @@
 ﻿using Logic.Administration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query;
 using Shared.Enums;
 using Shared.Models.User;
 
@@ -16,9 +17,16 @@ namespace Service.Api.ApiControllers.UserAdministration
 
         [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
         [HttpGet(Name = "GetUsers")]
-        public async Task<IEnumerable<UserModel>> GetUsers([FromQuery] bool include)
+        public async Task<IEnumerable<UserModel>> GetUsers([FromQuery] bool includeCredentials, bool includeUserRights)
         {
-            return await _userAdministration.GetUsers(include);
+            return await _userAdministration.GetUsers(includeCredentials, includeUserRights);
+        }
+
+        [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
+        [HttpGet(Name = "GetUserAdministrationPageModel")]
+        public async Task<UserAdministrationPageDataModel> GetUserAdministrationPageModel()
+        {
+            return await _userAdministration.GetUserAdministrationPageModel();
         }
 
         [JwtAuthentication()]
@@ -30,9 +38,9 @@ namespace Service.Api.ApiControllers.UserAdministration
 
         [JwtAuthentication(UserRole = UserRoleEnum.Admin)]
         [HttpGet(Name = "GetUserById")]
-        public async Task<UserModel?> GetUserById([FromQuery] int userId, bool include)
+        public async Task<UserModel?> GetUserById([FromQuery] int userId, bool includeCredentials, bool includeUserRights)
         {
-            return await _userAdministration.GetUserById(userId, include);
+            return await _userAdministration.GetUserById(userId, includeCredentials, includeUserRights);
         }
 
         [JwtAuthentication(UserRole = UserRoleEnum.Admin)]

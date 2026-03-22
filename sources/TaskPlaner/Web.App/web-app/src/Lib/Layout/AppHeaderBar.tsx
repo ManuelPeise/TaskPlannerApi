@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useLocalization } from "../../Hooks/useLocalization";
+import { useNavigate } from "react-router-dom";
 interface IProps {
   handleOpenLoginDialog: () => void;
 }
@@ -21,6 +22,7 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { getResource } = useLocalization();
 
+  const navigate = useNavigate();
   const handleLogout = React.useCallback(() => {
     onLogout();
     setAnchorEl(null);
@@ -40,13 +42,17 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Grid size="auto">
+          <Grid
+            size="auto"
+            onClick={() => navigate("/")}
+            sx={{ cursor: "pointer" }}
+          >
             <Typography
               variant="h6"
               sx={{ color: "#ffffff", padding: 1 }}
               component="div"
             >
-              Task Planner
+              {getResource("labelAppName")}
             </Typography>
           </Grid>
           <Grid size="auto" justifyContent="center">

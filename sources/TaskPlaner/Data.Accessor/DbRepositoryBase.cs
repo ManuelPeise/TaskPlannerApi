@@ -85,14 +85,15 @@ namespace Data.Accessor
             return await table.Where(e => e.Id == id).ToHashSetAsync();
         }
 
-        public async Task Insert(TEntity entity, Func<TEntity, bool> predicate)
+        public async Task Insert(TEntity entity, Expression<Func<TEntity, bool>> predicate)
         {
-            var table = _dbContext.Set<TEntity>().AsNoTracking();
-            var existingEntity = table.FirstOrDefault(predicate);
+            var table = _dbContext.Set<TEntity>();
+
+            var existingEntity = await table.FirstOrDefaultAsync(predicate);
 
             if (existingEntity == null)
             {
-                _dbContext.Set<TEntity>().Add(entity);
+                await table.AddAsync(entity);
             }
         }
 

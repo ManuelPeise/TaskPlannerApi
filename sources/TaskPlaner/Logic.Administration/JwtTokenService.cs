@@ -32,7 +32,7 @@ namespace Logic.Administration
          
             var email = principal.Identity!.Name ?? string.Empty;
 
-            var user = await unitOfWork.GetUserByEmail(email, true);
+            var user = await unitOfWork.GetUserByEmail(email, true, false);
 
             if (user == null || user?.Credentials == null || user.Credentials.RefreshToken != request.RefreshToken)
             {

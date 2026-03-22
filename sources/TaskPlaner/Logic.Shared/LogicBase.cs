@@ -31,7 +31,7 @@ namespace Logic.Shared
                 throw new UnauthorizedAccessException();
             }
 
-            _currentUser = await _userUnitOfWork.GetUserByEmail(emailAddress, true);
+            _currentUser = await _userUnitOfWork.GetUserByEmail(emailAddress, true, false);
         }
     }
 }

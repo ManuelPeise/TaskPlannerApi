@@ -43,11 +43,21 @@ export const LoginDialog: React.FC<IProps> = (props) => {
     onClose();
   }, [onClose, resetForm]);
 
+  const handleCloseDialog = React.useCallback(
+    (event: React.SyntheticEvent, reason?: string) => {
+      if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
+        resetForm();
+        onClose();
+      }
+    },
+    [onClose, resetForm],
+  );
+
   return (
     <Dialog
       keepMounted={open}
       open={open}
-      onClose={onClose}
+      onClose={handleCloseDialog}
       maxWidth="sm"
       fullWidth
       sx={{ padding: 4 }}
