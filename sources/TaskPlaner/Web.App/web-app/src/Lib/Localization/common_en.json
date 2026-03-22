@@ -27,5 +27,13 @@
   "labelLastName": "Last Name",
   "labelUserDetails": "User Details",
   "labelIsActive": "Is Active",
-  "labelBackToList": "Back to List"
+  "labelBackToList": "Back to List",
+  "labelAccountActivation": "Account Activation",
+  "labelConfirmPassword": "Confirm Password",
+  "labelActivateAccount": "Activate Account",
+  "descriptionActivateAccount": "Please set your email and password to activate your account.",
+  "labelAccountActivated": "Account activated successfully. You can now log in.",
+  "labelAccountActivationFailed": "Account activation failed. Please try again, or contact support {Email}.",
+  "labelAccountActivationResult": "Account Activation Result",
+  "labelOK": "OK"
 }

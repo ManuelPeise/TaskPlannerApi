@@ -12,11 +12,12 @@ import {
 import { useLocalization } from "../../Hooks/useLocalization";
 import { useNavigate } from "react-router-dom";
 interface IProps {
+  isPrivate: boolean;
   handleOpenLoginDialog: () => void;
 }
 
 const AppHeaderBar: React.FC<IProps> = (props) => {
-  const { handleOpenLoginDialog } = props;
+  const { isPrivate, handleOpenLoginDialog } = props;
   const { isAuthenticated, currentUser, onLogout } = useAuth();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -56,17 +57,19 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
             </Typography>
           </Grid>
           <Grid size="auto" justifyContent="center">
-            <Button
-              color="inherit"
-              onClick={
-                currentUser?.emailAddress
-                  ? (event) => setAnchorEl(event.currentTarget)
-                  : handleOpenLogin
-              }
-            >
-              {currentUser?.emailAddress ??
-                getResource("common.labelAuthorize")}
-            </Button>
+            {isPrivate && (
+              <Button
+                color="inherit"
+                onClick={
+                  currentUser?.emailAddress
+                    ? (event) => setAnchorEl(event.currentTarget)
+                    : handleOpenLogin
+                }
+              >
+                {currentUser?.emailAddress ??
+                  getResource("common.labelAuthorize")}
+              </Button>
+            )}
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}

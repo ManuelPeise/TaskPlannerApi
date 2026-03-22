@@ -1,6 +1,7 @@
 ﻿using Logic.Administration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models.Administartion;
+using Shared.Models.User;
 
 namespace Service.Api.ApiControllers.Authentication
 {
@@ -23,6 +24,12 @@ namespace Service.Api.ApiControllers.Authentication
         public async Task<TokenResponse?> RefreshToken([FromBody] TokenResponse model)
         {
             return await _userAuthentication.RefreshTokenAsync(model);
+        }
+
+        [HttpPost(Name = "ActivateAccount")]
+        public async Task<bool> ActivateAccount([FromBody] AccountActivationModel model)
+        {
+            return await _userAuthentication.ActivateAccountAsync(model);
         }
     }
 }
