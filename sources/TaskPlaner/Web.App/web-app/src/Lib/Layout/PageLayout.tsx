@@ -3,7 +3,7 @@ import React, { PropsWithChildren } from "react";
 import AppHeaderBar from "./AppHeaderBar";
 import LoginDialog from "./LoginDialog";
 import { useAuth } from "../../Hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface INavigationItem {
   label: string;
@@ -11,33 +11,45 @@ interface INavigationItem {
   isDisabled: boolean;
 }
 
-const PageLayout: React.FC<PropsWithChildren> = (props) => {
+interface IProps extends PropsWithChildren {}
+const PageLayout: React.FC<IProps> = (props) => {
   const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
   const { currentUser, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const navigationItems: INavigationItem[] = [];
+  const location = useLocation();
 
-  if (
-    currentUser?.accessRights.find((ar) => ar.name === "UserAdministration")
-      ?.canView
-  ) {
-    navigationItems.push({
+  const isPrivate = React.useMemo(() => {
+    return !/^\/account\/activate\/.+/.test(location.pathname);
+  }, [location.pathname]);
+
+  const navigationItems = React.useMemo((): INavigationItem[] => {
+    const items: INavigationItem[] = [];
+
+    items.push({
       label: "User Administration",
       route: "/user-administration",
-      isDisabled: false,
+      isDisabled:
+        !isAuthenticated ||
+        !currentUser?.accessRights.find(
+          (ar) => ar.name === "UserAdministration",
+        )?.canView,
     });
-  }
+    return items;
+  }, [isAuthenticated, currentUser]);
 
   React.useEffect(() => {
-    if (!isAuthenticated) {
+    if (isPrivate && !isAuthenticated) {
       setLoginDialogOpen(true);
     }
-  }, [isAuthenticated]);
+  }, [isPrivate, isAuthenticated]);
 
   return (
     <Grid container width={"100%"}>
       <Grid size={12}>
-        <AppHeaderBar handleOpenLoginDialog={() => setLoginDialogOpen(true)} />
+        <AppHeaderBar
+          isPrivate={isPrivate}
+          handleOpenLoginDialog={() => setLoginDialogOpen(true)}
+        />
       </Grid>
       <Grid size={12} display="flex">
         <Grid size={2} sx={{ backgroundColor: "#000000", height: "93vh" }}>

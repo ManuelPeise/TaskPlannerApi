@@ -4,10 +4,11 @@ using Logic.Shared.Interfaces;
 using Microsoft.Extensions.Options;
 using Shared.Enums;
 using Shared.Models.Administartion;
+using Shared.Models.User;
 
 namespace Logic.Administration
 {
-    public class UserAuthentication: IUserAuthentication
+    public class UserAuthentication : IUserAuthentication
     {
         private readonly ILogger<UserAuthentication> _logger;
         private readonly IUserUnitOfWork _userUnitOfWork;
@@ -15,8 +16,8 @@ namespace Logic.Administration
         private readonly JwtTokenModel _jwtTokenModel;
 
         public UserAuthentication(
-            ILogger<UserAuthentication> logger, 
-            IUserUnitOfWork userUnitOfWork, 
+            ILogger<UserAuthentication> logger,
+            IUserUnitOfWork userUnitOfWork,
             IJwtTokenService jwtTokenService,
             IOptions<JwtTokenModel> options)
         {
@@ -30,14 +31,14 @@ namespace Logic.Administration
         {
             try
             {
-                var user = await _userUnitOfWork.GetUserByEmail(request.EmailAddress?? string.Empty, true, false);
-                
+                var user = await _userUnitOfWork.GetUserByEmail(request.EmailAddress ?? string.Empty, true, false);
+
                 if (user == null || user.Credentials == null)
                 {
                     return null;
                 }
 
-                if(!PasswordHasher.VerifyPassword(request.Password??string.Empty, user?.Credentials?.PasswordHash?? string.Empty))
+                if (!PasswordHasher.VerifyPassword(request.Password ?? string.Empty, user?.Credentials?.PasswordHash ?? string.Empty))
                 {
                     return null;
                 }
@@ -77,5 +78,32 @@ namespace Logic.Administration
                 return null;
             }
         }
+
+        public async Task<bool> ActivateAccountAsync(AccountActivationModel model)
+        {
+            try
+            {
+                var user = await _userUnitOfWork.GetUserById(model.UserId, true, false);
+
+                if (user == null || user.IsActive || user.Credentials == null || user.EmailAddress != model.EmailAddress)
+                {
+                    return false;
+                }
+
+                user.IsActive = true;
+                user.Credentials.PasswordHash = PasswordHasher.HashPassword(model.Password);
+
+                await _userUnitOfWork.UpdateUser(user, true);
+                await _userUnitOfWork.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                await _logger.LogMessageAsync($"Error activating account for email: {model.EmailAddress}", LogMessageTypeEnum.Error, exception);
+                return false;
+            }
+        }
+
     }
 }

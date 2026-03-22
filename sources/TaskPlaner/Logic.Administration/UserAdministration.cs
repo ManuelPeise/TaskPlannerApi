@@ -78,16 +78,18 @@ namespace Logic.Administration
 
                 await _userUnitOfWork.SaveChangesAsync();
 
+#if !DEBUG
                 var userEntity = await _userUnitOfWork.GetUserByEmail(userModel.EmailAddress, false, false);
                 
                 if (userEntity != null)
                 {
-                    var link = $"{_apiOptions.UiBaseAddress}/account/activateAccount?userId={userEntity.Id}";
+                    var link = $"{_apiOptions.UiBaseAddress}account/activate/{userEntity.Id}";
 
                     var emailContent = CreateAccountActivationEmailContent($"{userEntity.Name} {userEntity.LastName}", userEntity.EmailAddress, link);
 
                     await _emailClient.SendMail(emailContent, userEntity.EmailAddress);
                 }
+#endif
             }
             catch (Exception exception)
             {
@@ -151,7 +153,7 @@ namespace Logic.Administration
 <p><b>Email:</b> {customerMailAddress}</p>
 <p>Please set your password using the link below:</p>
 <p><a href='{resetLink}'>Set Password</a></p>
-<p>Best regards,<br/>TaskPlanner Team</p>
+<p>Best regards,</p><p/>TaskPlanner Team</p>
 "
             };
 
