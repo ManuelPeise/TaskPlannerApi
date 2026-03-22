@@ -20,7 +20,7 @@ namespace Data.Accessor.Interfaces
             bool asNoTracking = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes);
 
-        Task Insert(TEntity entity, Expression<Func<TEntity, bool>> predicate);
+        Task Insert(TEntity entity, Expression<Func<TEntity, bool>>? predicate);
      
         Task Delete(int id);
     }
