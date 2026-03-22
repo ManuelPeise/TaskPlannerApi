@@ -37,6 +37,25 @@ namespace Data.Database.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "GitRepositoryCredentials",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UserName = table.Column<string>(type: "longtext", nullable: false),
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GitRepositoryCredentials", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "LogMessageTable",
                 columns: table => new
                 {
@@ -107,19 +126,15 @@ namespace Data.Database.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "TaskTable",
+                name: "GitRepositoryTable",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(type: "longtext", nullable: false),
-                    Description = table.Column<string>(type: "longtext", nullable: false),
-                    TaskType = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Priority = table.Column<int>(type: "int", nullable: false),
-                    DeadLineDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ParentTaskId = table.Column<int>(type: "int", nullable: true),
+                    Url = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: false),
+                    GitRepositoryCredentialsId = table.Column<int>(type: "int", nullable: false),
+                    UserEntityId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "longtext", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -127,19 +142,18 @@ namespace Data.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaskTable", x => x.Id);
+                    table.PrimaryKey("PK_GitRepositoryTable", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TaskTable_TaskTable_ParentTaskId",
-                        column: x => x.ParentTaskId,
-                        principalTable: "TaskTable",
+                        name: "FK_GitRepositoryTable_GitRepositoryCredentials_GitRepositoryCre~",
+                        column: x => x.GitRepositoryCredentialsId,
+                        principalTable: "GitRepositoryCredentials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TaskTable_UserTable_UserId",
-                        column: x => x.UserId,
+                        name: "FK_GitRepositoryTable_UserTable_UserEntityId",
+                        column: x => x.UserEntityId,
                         principalTable: "UserTable",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -180,6 +194,49 @@ namespace Data.Database.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "TaskTable",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(type: "longtext", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: false),
+                    TaskType = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Priority = table.Column<int>(type: "int", nullable: false),
+                    DeadLineDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    ParentTaskId = table.Column<int>(type: "int", nullable: true),
+                    GitRepositoryId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskTable", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TaskTable_GitRepositoryTable_GitRepositoryId",
+                        column: x => x.GitRepositoryId,
+                        principalTable: "GitRepositoryTable",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TaskTable_TaskTable_ParentTaskId",
+                        column: x => x.ParentTaskId,
+                        principalTable: "TaskTable",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskTable_UserTable_UserId",
+                        column: x => x.UserId,
+                        principalTable: "UserTable",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.InsertData(
                 table: "AccessRightsEntity",
                 columns: new[] { "Id", "AccessRightGuid", "CreatedAt", "CreatedBy", "Name", "UpdatedAt", "UpdatedBy" },
@@ -188,6 +245,21 @@ namespace Data.Database.Migrations
                     { 1, new Guid("91cb6210-1990-4e46-94cd-1972fd40e9d3"), new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", "Tasks", new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System" },
                     { 2, new Guid("a15eb59d-e420-4f08-ba99-e7f93948278c"), new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", "UserAdministration", new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GitRepositoryTable_GitRepositoryCredentialsId",
+                table: "GitRepositoryTable",
+                column: "GitRepositoryCredentialsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GitRepositoryTable_UserEntityId",
+                table: "GitRepositoryTable",
+                column: "UserEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskTable_GitRepositoryId",
+                table: "TaskTable",
+                column: "GitRepositoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskTable_ParentTaskId",
@@ -228,7 +300,13 @@ namespace Data.Database.Migrations
                 name: "UserAccessRightEntity");
 
             migrationBuilder.DropTable(
+                name: "GitRepositoryTable");
+
+            migrationBuilder.DropTable(
                 name: "AccessRightsEntity");
+
+            migrationBuilder.DropTable(
+                name: "GitRepositoryCredentials");
 
             migrationBuilder.DropTable(
                 name: "UserTable");

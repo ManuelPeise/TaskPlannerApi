@@ -263,6 +263,9 @@ namespace Data.Database.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("GitRepositoryId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ParentTaskId")
                         .HasColumnType("int");
 
@@ -286,10 +289,12 @@ namespace Data.Database.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GitRepositoryId");
 
                     b.HasIndex("ParentTaskId");
 
@@ -415,6 +420,10 @@ namespace Data.Database.Migrations
 
             modelBuilder.Entity("Data.Entities.Tasks.TaskEntity", b =>
                 {
+                    b.HasOne("Data.Entities.Git.GitRepositoryEntity", "GitRepository")
+                        .WithMany()
+                        .HasForeignKey("GitRepositoryId");
+
                     b.HasOne("Data.Entities.Tasks.TaskEntity", null)
                         .WithMany("SubTasks")
                         .HasForeignKey("ParentTaskId")
@@ -423,10 +432,11 @@ namespace Data.Database.Migrations
                     b.HasOne("Data.Entities.User.UserEntity", "AssignedUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AssignedUser");
+
+                    b.Navigation("GitRepository");
                 });
 
             modelBuilder.Entity("Data.Entities.User.UserEntity", b =>
