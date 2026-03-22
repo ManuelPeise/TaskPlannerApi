@@ -18,6 +18,7 @@ namespace Logic.Shared
         private readonly DatabaseContext _databaseContext;
         private readonly HttpContext _httpContext;
 
+        private readonly IDbRepositoryBase<UserEntity> _userRepository;
         private readonly IDbRepositoryBase<TaskEntity> _taskRepository;
         private readonly IDbRepositoryBase<GitRepositoryEntity> _gitRepository;
         private readonly Func<IQueryable<TaskEntity>, IQueryable<TaskEntity>>[] includeExpression = { q => q.Include(t => t.SubTasks), q => q.Include(t => t.AssignedUser), q => q.Include(t => t.GitRepository) };
@@ -27,6 +28,7 @@ namespace Logic.Shared
             _databaseContext = databaseContext;
             _httpContext = httpContextAccessor.HttpContext;
             _gitRepository = new DbRepositoryBase<GitRepositoryEntity>(_databaseContext);
+            _userRepository = new DbRepositoryBase<UserEntity>(_databaseContext);
             _taskRepository = new DbRepositoryBase<TaskEntity>(_databaseContext);
         }
 
@@ -152,6 +154,29 @@ namespace Logic.Shared
             };
         }
 
+        public async Task<List<GitRepositoryModel>> GetGitRepositories(int userId)
+        {
+            var userEntities = await _userRepository.GetById(userId, false, q => q.Include(u => u.GitRepositories).ThenInclude(gr => gr.GitRepositoryCredentials));
+
+            if (userEntities == null || !userEntities.Any() || userEntities.Count > 1)
+            {
+                return new List<GitRepositoryModel>();
+            }
+            var userEntity = userEntities.First();
+            return userEntity.GitRepositories.Select(gr => new GitRepositoryModel
+            {
+                Id = gr.Id,
+                Name = gr.Name,
+                Url = gr.Url,
+                GitRepositoryCredentialsId = gr.GitRepositoryCredentialsId,
+                CreatedAt = gr.CreatedAt,
+                CreatedBy = gr.CreatedBy,
+                UpdatedAt = gr.UpdatedAt,
+                UpdatedBy = gr.UpdatedBy
+            }).ToList();
+        }
+       
+        
         public async Task AddTask(TaskModel taskModel)
         {
             var gitRepositoryEntities = taskModel.GitRepositoryId.HasValue

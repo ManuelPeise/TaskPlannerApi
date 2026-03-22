@@ -6,6 +6,7 @@ namespace Logic.Shared.Interfaces
     {
         Task<List<TaskModel>> GetAllTasks();
         Task<TaskModel?> GetTaskById(int id);
+        Task<List<GitRepositoryModel>> GetGitRepositories(int userId);
         Task AddTask(TaskModel taskModel);
         Task UpdateTask(TaskModel taskModel);
         Task DeleteTask(int taskId);

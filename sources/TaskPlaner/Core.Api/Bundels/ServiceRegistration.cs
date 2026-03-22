@@ -9,6 +9,7 @@ using Microsoft.OpenApi;
 using Shared.Models.User;
 using Logic.Shared.DI;
 using Shared.Models.Email;
+using Logic.Tasks.DI;
 
 namespace Core.Api.Bundels
 {
@@ -32,6 +33,7 @@ namespace Core.Api.Bundels
 
             services.AddSharedServices();
             services.AddAdministrationServices();
+            services.AddTaskServices();
 
             services.AddControllers();
             services.AddHttpContextAccessor();

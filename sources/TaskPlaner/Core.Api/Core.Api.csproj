@@ -28,6 +28,7 @@
     <ProjectReference Include="..\Data.Database\Data.Database.csproj" />
     <ProjectReference Include="..\Logic.Administration\Logic.Administration.csproj" />
     <ProjectReference Include="..\Logic.Shared\Logic.Shared.csproj" />
+    <ProjectReference Include="..\Logic.Tasks\Logic.Tasks.csproj" />
     <ProjectReference Include="..\Service.Api\Service.Api.csproj" />
   </ItemGroup>
 
