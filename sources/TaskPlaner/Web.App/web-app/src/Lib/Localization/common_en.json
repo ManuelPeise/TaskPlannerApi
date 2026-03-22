@@ -35,5 +35,7 @@
   "labelAccountActivated": "Account activated successfully. You can now log in.",
   "labelAccountActivationFailed": "Account activation failed. Please try again, or contact support {Email}.",
   "labelAccountActivationResult": "Account Activation Result",
-  "labelOK": "OK"
+  "labelOK": "OK",
+  "labelTaskAdministration": "Task Administration",
+  "labelDashboard": "Dashboard"
 }

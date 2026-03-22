@@ -1,10 +1,6 @@
 ﻿using Data.Entities.Administration;
-using Data.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Data.Database.Seeds
 {
@@ -19,7 +15,7 @@ namespace Data.Database.Seeds
                 {
                     Id = 1,
                     AccessRightGuid = Guid.Parse(AccessRightConstants.AccessRightTasksGuid),
-                    Name = "Tasks",
+                    Name = "TasksAdministration",
                     CreatedAt = createdAt,
                     CreatedBy = "System",
                     UpdatedAt = createdAt,
@@ -30,6 +26,16 @@ namespace Data.Database.Seeds
                     Id = 2,
                     AccessRightGuid = Guid.Parse(AccessRightConstants.AccessRightUserAdministrationGuid),
                     Name = "UserAdministration",
+                    CreatedAt = createdAt,
+                    CreatedBy = "System",
+                    UpdatedAt = createdAt,
+                    UpdatedBy = "System"
+                },
+                new AccessRightsEntity
+                {
+                    Id = 3,
+                    AccessRightGuid = Guid.Parse(AccessRightConstants.AccessRightDashboardGuid),
+                    Name = "Dashboard",
                     CreatedAt = createdAt,
                     CreatedBy = "System",
                     UpdatedAt = createdAt,

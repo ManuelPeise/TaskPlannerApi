@@ -92,6 +92,16 @@ namespace Core.Api.Bundels
                                     CanEdit = true,
                                     CanDelete = true,
                                     IsActive = true
+                                },
+                                new UserAccessRightEntity
+                                {
+                                    AccessRightId = 3,
+                                    Deny = false,
+                                    CanCreate = true,
+                                    CanView = true,
+                                    CanEdit = true,
+                                    CanDelete = true,
+                                    IsActive = true
                                 }
                         }
                     });
