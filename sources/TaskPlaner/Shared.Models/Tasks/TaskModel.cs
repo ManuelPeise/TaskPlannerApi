@@ -8,8 +8,8 @@ namespace Shared.Models.Tasks
         public int TaskId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public TaskTypeEnum TaskType { get; set; } = TaskTypeEnum.Default;
-        public TaskStatusEnum Status { get; set; } = TaskStatusEnum.Todo;
+        public TaskTypeEnum TaskType { get; set; } = TaskTypeEnum.All;
+        public TaskStatusEnum Status { get; set; } = TaskStatusEnum.Created;
         public TaskPriorityEnum Priority { get; set; } = TaskPriorityEnum.Medium;
         public DateTime? DeadLineDate { get; set; }
         public int? AssignedUserId { get; set; }

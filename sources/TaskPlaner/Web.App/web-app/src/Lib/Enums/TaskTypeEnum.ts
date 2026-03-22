@@ -1,4 +1,7 @@
 export enum TaskTypeEnum {
-  Default = 0,
-  GitHub = 1,
+  All = 0,
+  BacklogItem = 1,
+  Health = 2,
+  Hobby = 3,
+  Work = 4,
 }

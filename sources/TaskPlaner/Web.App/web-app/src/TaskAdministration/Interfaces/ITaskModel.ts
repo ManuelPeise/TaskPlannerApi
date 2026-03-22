@@ -7,6 +7,7 @@ import { IGitRepositoryModel } from "./IGitRepositoryModel";
 export interface ITaskModel {
   taskId: number;
   title: string;
+  shortDescription: string;
   description: string;
   taskType: TaskTypeEnum;
   status: TaskStatusEnum;
