@@ -38,8 +38,13 @@ const useForm = <TModel>(
     setModel(initialValues ?? ({} as TModel));
   }, [initialValues]);
 
+  const isModified = React.useMemo(() => {
+    return JSON.stringify(model) !== JSON.stringify(initialValues);
+  }, [model, initialValues]);
+
   return {
     model,
+    isModified,
     handleChange,
     handleSubmit,
     subscribe,

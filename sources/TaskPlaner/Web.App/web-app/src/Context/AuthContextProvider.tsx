@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from "react";
 import { IAuthenticationContext } from "../Lib/Interfaces/IAuthenticationContext";
-import useApi from "../Hooks/useApi";
+import useApi from "../Hooks/useStatelessApi";
 import useLocalStorage, { LocalStorageKeys } from "../Hooks/useLocalStorage";
 import { ITokenData } from "../Lib/Interfaces/ITokenData";
 import { IUserData } from "../Lib/Interfaces/IUserData";
@@ -29,9 +29,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = (props) => {
 
   const storage = useLocalStorage<ITokenData>(LocalStorageKeys.Token);
 
-  const authApi = useApi<ITokenData>();
-
-  const currentUserApi = useApi<IUserData>();
+  const authApi = useApi();
+  const currentUserApi = useApi();
 
   const onLogin = async (email: string, password: string) => {
     setIsLoading(true);
@@ -39,7 +38,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = (props) => {
       emailAddress: email,
       password,
     };
-    const authResponse = await authApi.sendRequest({
+    const authResponse = await authApi.sendRequest<ITokenData>({
       requestUrl: authenticateRequestUrl,
       method: "POST",
       model: requestData,
@@ -52,7 +51,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = (props) => {
 
     storage.setItem(storageData);
 
-    const currentUserResponse = await currentUserApi.sendRequest({
+    const currentUserResponse = await currentUserApi.sendRequest<IUserData>({
       requestUrl: currentUserRequestUrl,
       method: "POST",
       token: authResponse?.jwt || "",

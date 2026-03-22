@@ -1,5 +1,6 @@
-﻿using System.Linq.Expressions;
-using Data.Entities;
+﻿using Data.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Data.Accessor.Interfaces
 {
@@ -19,7 +20,8 @@ namespace Data.Accessor.Interfaces
             bool asNoTracking = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes);
 
-        Task Insert(TEntity entity, Func<TEntity, bool> predicate);
+        Task Insert(TEntity entity, Expression<Func<TEntity, bool>> predicate);
+     
         Task Delete(int id);
     }
 }

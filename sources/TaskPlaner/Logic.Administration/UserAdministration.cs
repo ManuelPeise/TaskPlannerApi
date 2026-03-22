@@ -43,11 +43,11 @@ namespace Logic.Administration
             }
         }
 
-        public async Task<IEnumerable<UserModel>> GetUsers(bool includeCredentials)
+        public async Task<IEnumerable<UserModel>> GetUsers(bool includeCredentials, bool includeUserRights)
         {
             try
             {
-                return await _userUnitOfWork.GetUsers(includeCredentials);
+                return await _userUnitOfWork.GetUsers(includeCredentials, includeUserRights);
             }
             catch (Exception exception)
             {
@@ -57,12 +57,12 @@ namespace Logic.Administration
             }
         }
 
-        public async Task<UserModel?> GetUserById(int userId, bool includeCredentials)
+        public async Task<UserModel?> GetUserById(int userId, bool includeCredentials, bool includeUserRights)
         {
 
-            var users = await _userUnitOfWork.GetUsers(includeCredentials);
+            var users = await _userUnitOfWork.GetUsers(includeCredentials,includeUserRights);
 
-            if (users == null || users.Any())
+            if (users == null || !users.Any())
             {
                 return null;
             }
@@ -78,7 +78,7 @@ namespace Logic.Administration
 
                 await _userUnitOfWork.SaveChangesAsync();
 
-                var userEntity = await _userUnitOfWork.GetUserByEmail(userModel.EmailAddress, false);
+                var userEntity = await _userUnitOfWork.GetUserByEmail(userModel.EmailAddress, false, false);
                 
                 if (userEntity != null)
                 {
@@ -122,6 +122,24 @@ namespace Logic.Administration
             }
         }
 
+        public async Task<UserAdministrationPageDataModel> GetUserAdministrationPageModel()
+        {
+            try
+            {
+                var users = await _userUnitOfWork.GetUsers(false, false);
+
+                return new UserAdministrationPageDataModel
+                {
+                    Users = users.ToList(),
+                    AccessRights = await _userUnitOfWork.GetAvailableAccessRights()
+                };
+            }
+            catch (Exception exception)
+            {
+                await _logger.LogMessageAsync("An error occurred while loading user administration page data.", LogMessageTypeEnum.Error, exception);
+                return new UserAdministrationPageDataModel();
+            }
+        }
         private EmailContent CreateAccountActivationEmailContent(string fullName, string customerMailAddress, string resetLink)
         {
             var content = new EmailContent

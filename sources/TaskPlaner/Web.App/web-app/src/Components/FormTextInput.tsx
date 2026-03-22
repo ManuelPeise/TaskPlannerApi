@@ -19,6 +19,7 @@ const FormTextInput: React.FC<IProps> = (props) => {
       value={value}
       label={label}
       type={type}
+      variant="standard"
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
     />

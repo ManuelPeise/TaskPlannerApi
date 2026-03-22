@@ -30,7 +30,7 @@ namespace Logic.Administration
         {
             try
             {
-                var user = await _userUnitOfWork.GetUserByEmail(request.EmailAddress?? string.Empty, true);
+                var user = await _userUnitOfWork.GetUserByEmail(request.EmailAddress?? string.Empty, true, false);
                 
                 if (user == null || user.Credentials == null)
                 {
