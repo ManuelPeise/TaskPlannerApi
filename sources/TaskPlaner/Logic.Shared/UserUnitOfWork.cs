@@ -92,7 +92,7 @@ namespace Logic.Shared
 
         public async Task<UserModel?> GetUserById(int userId, bool includeCredentials, bool includeUserRights)
         {
-            var userEntities = await _userRepository.GetById(
+            var userEntity = await _userRepository.GetById(
                 userId,
                 false,
                 includeCredentials && includeUserRights ?
@@ -102,13 +102,6 @@ namespace Logic.Shared
                     includeUserRights ?
                     includeAccessRightsExpression :
                     null);
-
-            if (!userEntities.Any() || userEntities.Count > 1)
-            {
-                return null;
-            }
-
-            var userEntity = userEntities.FirstOrDefault();
 
             if (userEntity == null)
             {
@@ -278,29 +271,22 @@ namespace Logic.Shared
 
         public async Task UpdateUser(UserModel user, bool updateCredentials)
         {
-            var userEntities = await _userRepository.GetById(user.Id, false, includes: includeExpression);
+            var userEntity = await _userRepository.GetById(user.Id, false, includes: includeExpression);
 
-            if (userEntities == null || userEntities.Count > 1)
+            if (userEntity == null)
             {
                 return;
             }
 
-            var userEntityToUpdate = userEntities.FirstOrDefault();
+            userEntity.Name = user.Name;
+            userEntity.LastName = user.LastName;
+            userEntity.EmailAddress = user.EmailAddress;
+            userEntity.IsActive = user.IsActive;
+            userEntity.UserRole = user.UserRole;
 
-            if (userEntityToUpdate == null)
+            if (updateCredentials && userEntity.Credentials == null && user.Credentials != null)
             {
-                return;
-            }
-
-            userEntityToUpdate.Name = user.Name;
-            userEntityToUpdate.LastName = user.LastName;
-            userEntityToUpdate.EmailAddress = user.EmailAddress;
-            userEntityToUpdate.IsActive = user.IsActive;
-            userEntityToUpdate.UserRole = user.UserRole;
-
-            if (updateCredentials && userEntityToUpdate.Credentials == null && user.Credentials != null)
-            {
-                userEntityToUpdate.Credentials = new UserCredentialsEntity
+                userEntity.Credentials = new UserCredentialsEntity
                 {
                     PasswordHash = PasswordHasher.HashPassword(user.Credentials.PasswordHash),
                     RefreshToken = user.Credentials.RefreshToken

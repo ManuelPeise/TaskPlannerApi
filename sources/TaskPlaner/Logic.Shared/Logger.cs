@@ -4,7 +4,6 @@ using Data.Database;
 using Data.Entities.Administration;
 using Logic.Shared.Interfaces;
 using Shared.Enums;
-using Shared.Interfaces.Administration;
 using Shared.Models.Administartion;
 
 namespace Logic.Shared

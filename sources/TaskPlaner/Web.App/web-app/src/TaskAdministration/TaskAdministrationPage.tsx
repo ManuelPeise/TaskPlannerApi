@@ -4,23 +4,29 @@ import useStateFulApiService from "../Hooks/useStateFulApiService";
 import { ITokenData } from "../Lib/Interfaces/ITokenData";
 import { ITaskPageModel } from "./Interfaces/ITaskPageModel";
 import { Grid } from "@mui/material";
-import { ITaskModel } from "./Interfaces/ITaskModel";
 import { IDropdownItem } from "../Lib/Interfaces/IDropdownItem";
 import TaskToolbar from "./Components/TaskToolbar";
 import TaskTable from "./Components/TaskTable";
 import { ITaskFilterOptions } from "./Interfaces/ITaskFilterOptions";
 import { TaskTypeEnum } from "../Lib/Enums/TaskTypeEnum";
-import { ITaskItemProps } from "./Interfaces/ITaskItemProps";
-import { dummyTaskDataCollection } from "./dummyData";
+import { ITaskItemBase } from "./Interfaces/ITaskItemBase";
 import { useLocalization } from "../Hooks/useLocalization";
 import { TaskStatusEnum } from "../Lib/Enums/TaskStatusEnum";
+import useStatelessApi from "../Hooks/useStatelessApi";
+import LoadingIndicator from "../Components/LoadingIndicator";
 
 interface IProps {
+  isLoading: boolean;
   filterOptions?: ITaskFilterOptions;
-  availableTasks: ITaskModel[];
-  gitRepositoryDropdownItems: IDropdownItem[];
+  availableTasks: ITaskItemBase[];
   userDropdownItems: IDropdownItem[];
-  handleFilterChange?: (options: Partial<ITaskFilterOptions>) => void;
+  handleAddTask: (task: ITaskItemBase) => Promise<ITaskItemBase[]>;
+  handleFilterChange: (options: Partial<ITaskFilterOptions>) => void;
+  handleUpdateTaskBase: (
+    task: ITaskItemBase,
+    callBack: (task: ITaskItemBase) => void,
+  ) => void;
+  handleDeleteTask: (taskId: number) => Promise<ITaskItemBase[]>;
 }
 
 const TaskAdministrationPageContainer: React.FC = () => {
@@ -39,6 +45,57 @@ const TaskAdministrationPageContainer: React.FC = () => {
     token: storage.getItem()?.jwt ?? null,
   });
 
+  const taskUpdateApi = useStatelessApi();
+
+  const handleAddTask = React.useCallback(
+    async (task: ITaskItemBase): Promise<ITaskItemBase[]> => {
+      const resopnse = await taskUpdateApi.sendRequest<ITaskItemBase[]>({
+        method: "POST",
+        requestUrl:
+          process.env.REACT_APP_API_URL + `taskadministration/addtask`,
+        model: task,
+        token: storage.getItem()?.jwt ?? null,
+      });
+
+      return resopnse ?? [];
+    },
+    [taskUpdateApi, storage],
+  );
+
+  const handleDeleteTask = React.useCallback(
+    async (taskId: number): Promise<ITaskItemBase[]> => {
+      const resopnse = await taskUpdateApi.sendRequest<ITaskItemBase[]>({
+        method: "POST",
+        requestUrl:
+          process.env.REACT_APP_API_URL +
+          `taskadministration/deletetask?taskid=${taskId}`,
+        token: storage.getItem()?.jwt ?? null,
+      });
+
+      return resopnse ?? [];
+    },
+    [taskUpdateApi, storage],
+  );
+
+  const handleUpdateTaskBase = React.useCallback(
+    async (task: ITaskItemBase, callBack: (task: ITaskItemBase) => void) => {
+      await taskUpdateApi
+        .sendRequest<ITaskItemBase>({
+          method: "POST",
+          requestUrl:
+            process.env.REACT_APP_API_URL + `taskadministration/updatetaskbase`,
+          model: task,
+          token: storage.getItem()?.jwt ?? null,
+        })
+        .then((res) => {
+          if (res) {
+            callBack(res);
+          }
+        });
+    },
+    [taskUpdateApi, storage],
+  );
+
   const handleFilterChange = React.useCallback(
     (options: Partial<ITaskFilterOptions>) => {
       setTaskFilterOptions({ ...taskFilterOptions, ...options });
@@ -53,46 +110,92 @@ const TaskAdministrationPageContainer: React.FC = () => {
   return (
     <TaskAdministrationPage
       availableTasks={taskApi.response.taskModels}
-      gitRepositoryDropdownItems={taskApi.response.gitDropdownItems}
       userDropdownItems={taskApi.response.userDropdownItems}
       filterOptions={taskFilterOptions}
+      handleAddTask={handleAddTask}
+      isLoading={taskApi.loading || taskUpdateApi.loading}
       handleFilterChange={handleFilterChange}
+      handleUpdateTaskBase={handleUpdateTaskBase}
+      handleDeleteTask={handleDeleteTask}
     />
   );
 };
 
 const TaskAdministrationPage: React.FC<IProps> = (props) => {
   const {
+    isLoading,
     filterOptions,
-    gitRepositoryDropdownItems,
     userDropdownItems,
+    availableTasks,
+    handleAddTask,
     handleFilterChange,
+    handleUpdateTaskBase,
+    handleDeleteTask,
   } = props;
 
   const { getResource } = useLocalization();
 
-  const [dummyTasks, setDummyTasks] = React.useState<ITaskItemProps[]>(
-    dummyTaskDataCollection,
-  );
+  const [tasks, setTasks] = React.useState<ITaskItemBase[]>(availableTasks);
 
-  const handleTaskChanged = React.useCallback(
-    (updatedTask: ITaskItemProps, status: TaskStatusEnum) => {
-      setDummyTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === updatedTask.id ? { ...updatedTask, status } : task,
-        ),
+  const handleUpdateTaskBaseWithStateUpdate = React.useCallback(
+    async (updatedTask: ITaskItemBase) => {
+      setTasks((prevTasks) =>
+        prevTasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
       );
     },
     [],
   );
 
-  const handleAssignUser = React.useCallback((task: ITaskItemProps) => {
-    setDummyTasks((prevTasks) =>
-      prevTasks.map((t) =>
-        t.id === task.id ? { ...t, assignedUserId: task.assignedUserId } : t,
-      ),
-    );
-  }, []);
+  const handleSaveTask = React.useCallback(
+    async (task: ITaskItemBase) => {
+      const updatedTasks = await handleAddTask(task);
+      setTasks(updatedTasks);
+    },
+    [handleAddTask],
+  );
+
+  const handleMoveTask = React.useCallback(
+    async (updatedTask: ITaskItemBase, status: TaskStatusEnum) => {
+      const task = tasks.find((t) => t.id === updatedTask.id);
+      if (!task) {
+        return;
+      }
+
+      task.status = status;
+
+      await handleUpdateTaskBase?.(
+        updatedTask,
+        handleUpdateTaskBaseWithStateUpdate,
+      );
+    },
+    [tasks, handleUpdateTaskBase, handleUpdateTaskBaseWithStateUpdate],
+  );
+
+  const handleAssignUser = React.useCallback(
+    async (updatedTask: ITaskItemBase) => {
+      const task = tasks.find((t) => t.id === updatedTask.id);
+
+      if (!task) {
+        return;
+      }
+
+      task.assignedUserId = updatedTask.assignedUserId;
+
+      await handleUpdateTaskBase?.(
+        updatedTask,
+        handleUpdateTaskBaseWithStateUpdate,
+      );
+    },
+    [tasks, handleUpdateTaskBase, handleUpdateTaskBaseWithStateUpdate],
+  );
+
+  const onDeleteTask = React.useCallback(
+    async (taskId: number) => {
+      const updatedTasks = await handleDeleteTask(taskId);
+      setTasks(updatedTasks);
+    },
+    [handleDeleteTask],
+  );
 
   const assignedUserDropdownItems = React.useMemo((): IDropdownItem[] => {
     return userDropdownItems.map((item) => {
@@ -111,7 +214,7 @@ const TaskAdministrationPage: React.FC<IProps> = (props) => {
   }, [userDropdownItems, getResource]);
 
   const filteredTasks = React.useMemo(() => {
-    return dummyTasks.filter((task) => {
+    return tasks.filter((task) => {
       const matchesUserFilter = filterOptions?.assignedUserId
         ? task.assignedUserId === filterOptions.assignedUserId
         : true;
@@ -122,22 +225,25 @@ const TaskAdministrationPage: React.FC<IProps> = (props) => {
 
       return matchesUserFilter && matchesTypeFilter;
     });
-  }, [dummyTasks, filterOptions]);
+  }, [tasks, filterOptions]);
 
   return (
     <Grid container spacing={2}>
       <TaskToolbar
+        isloading={isLoading}
         filterOptions={filterOptions}
-        gitRepositoryDropdownItems={gitRepositoryDropdownItems}
         userDropdownItems={userFilterDropdownItems}
+        handleSaveTask={handleSaveTask}
         handleFilterChange={handleFilterChange}
       />
       <TaskTable
         tasks={filteredTasks}
         userDropdownItems={assignedUserDropdownItems}
-        handleTaskChanged={handleTaskChanged}
+        handleMoveTask={handleMoveTask}
         handleAssignUser={handleAssignUser}
+        handleDeleteTask={onDeleteTask}
       />
+      <LoadingIndicator isLoading={isLoading} />
     </Grid>
   );
 };

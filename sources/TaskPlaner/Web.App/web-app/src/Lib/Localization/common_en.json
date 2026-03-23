@@ -53,5 +53,10 @@
   "labelView": "View",
   "labelViewTask": "View Task",
   "titleLogin": "Login to Task Planner",
-  "labelAll": "All"
+  "labelAll": "All",
+  "labelReadyToStart": "Ready to Start",
+  "titleAddTask": "Add New Task",
+  "labelSelectTaskType": "Select Task Type",
+  "labelTitle": "Title",
+  "labelShortDescription": "ShortDescription"
 }

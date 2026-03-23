@@ -1,7 +1,7 @@
 import { TaskStatusEnum } from "../Lib/Enums/TaskStatusEnum";
-import { ITaskItemProps } from "./Interfaces/ITaskItemProps";
+import { ITaskItemBase } from "./Interfaces/ITaskItemBase";
 
-export const dummyTaskDataCollection: ITaskItemProps[] = [
+export const dummyTaskDataCollection: ITaskItemBase[] = [
   {
     id: 1,
     title: "Design login page",

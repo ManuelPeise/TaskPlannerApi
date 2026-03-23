@@ -9,6 +9,7 @@ export interface ITaskModel {
   title: string;
   shortDescription: string;
   description: string;
+  acceptanceCriteria?: string;
   taskType: TaskTypeEnum;
   status: TaskStatusEnum;
   priority: TaskPriorityEnum;

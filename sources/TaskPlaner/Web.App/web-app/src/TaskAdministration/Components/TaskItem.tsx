@@ -4,20 +4,22 @@ import { DeleteOutline, MoreVertRounded } from "@mui/icons-material";
 import { IDropdownItem } from "../../Lib/Interfaces/IDropdownItem";
 import FormDropdown from "../../Components/FormDropdown";
 import { useAuth } from "../../Hooks/useAuth";
-import { ITaskItemProps } from "../Interfaces/ITaskItemProps";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 import FormLabel from "../../Components/FormLabel";
 import { useLocalization } from "../../Hooks/useLocalization";
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
 
 interface IProps {
-  task: ITaskItemProps;
+  task: ITaskItemBase;
   userDropdownItems: IDropdownItem[];
-  onChange: (updatedTask: ITaskItemProps) => void;
+  onChange: (updatedTask: ITaskItemBase) => void;
   onDragStart: (event: React.DragEvent<HTMLDivElement>, taskId: number) => void;
+  handleDeleteTask: (taskId: number) => Promise<void>;
 }
 
 const TaskItem: React.FC<IProps> = (props) => {
-  const { task, userDropdownItems, onDragStart, onChange } = props;
+  const { task, userDropdownItems, onDragStart, onChange, handleDeleteTask } =
+    props;
   const { currentUser } = useAuth();
   const { getResource } = useLocalization();
   const canEdit = React.useMemo(() => {
@@ -79,7 +81,12 @@ const TaskItem: React.FC<IProps> = (props) => {
                     : getResource("labelMissingPermission")
                 }
               >
-                <IconButton size="medium" color="primary" disabled={!canDelete}>
+                <IconButton
+                  size="medium"
+                  color="primary"
+                  disabled={!canDelete}
+                  onClick={() => handleDeleteTask(task.id)}
+                >
                   <DeleteOutline fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -97,7 +104,7 @@ const TaskItem: React.FC<IProps> = (props) => {
               value={
                 userDropdownItems.find(
                   (item) => item.id === task.assignedUserId,
-                ) || null
+                ) || userDropdownItems[0]
               }
               dropdownItems={userDropdownItems}
               disabled={!canEdit || task.status === TaskStatusEnum.Done}

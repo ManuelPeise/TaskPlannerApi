@@ -6,17 +6,28 @@ import { useLocalization } from "../../Hooks/useLocalization";
 import FormDropdown from "../../Components/FormDropdown";
 import { AddRounded } from "@mui/icons-material";
 import { TaskTypeEnum } from "../../Lib/Enums/TaskTypeEnum";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
+import AddTaskDialog from "./AddTaskDialog";
 
 interface IProps {
+  isloading: boolean;
   filterOptions?: ITaskFilterOptions;
-  gitRepositoryDropdownItems: IDropdownItem[];
   userDropdownItems: IDropdownItem[];
+  handleSaveTask: (task: ITaskItemBase) => Promise<void>;
   handleFilterChange?: (options: Partial<ITaskFilterOptions>) => void;
 }
 
 const TaskToolbar: React.FC<IProps> = (props) => {
-  const { filterOptions, userDropdownItems, handleFilterChange } = props;
+  const {
+    isloading,
+    filterOptions,
+    userDropdownItems,
+    handleFilterChange,
+    handleSaveTask,
+  } = props;
   const { getResource } = useLocalization();
+
+  const [addTaskDialogOpen, setAddTaskDialogOpen] = React.useState(false);
 
   const selectedUserItem = React.useMemo((): IDropdownItem | null => {
     return (
@@ -78,11 +89,17 @@ const TaskToolbar: React.FC<IProps> = (props) => {
       </Grid>
       <Grid size={2} display="flex" justifyContent="flex-end">
         <Tooltip title={getResource("labelAddTask")}>
-          <IconButton>
+          <IconButton onClick={() => setAddTaskDialogOpen(true)}>
             <AddRounded />
           </IconButton>
         </Tooltip>
       </Grid>
+      <AddTaskDialog
+        isLoading={isloading}
+        open={addTaskDialogOpen}
+        onClose={() => setAddTaskDialogOpen(false)}
+        handleSaveTask={handleSaveTask}
+      />
     </Grid>
   );
 };

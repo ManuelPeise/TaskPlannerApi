@@ -1,21 +1,22 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
-import { ITaskItemProps } from "../Interfaces/ITaskItemProps";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 import TaskItem from "./TaskItem";
 import { IDropdownItem } from "../../Lib/Interfaces/IDropdownItem";
 
 interface IProps {
   columnId: TaskStatusEnum;
-  tasks: ITaskItemProps[];
+  tasks: ITaskItemBase[];
   userDropdownItems: IDropdownItem[];
-  onItemChanged: (task: ITaskItemProps) => void;
+  onItemChanged: (task: ITaskItemBase) => void;
   onDragStart: (event: React.DragEvent<HTMLDivElement>, taskId: number) => void;
   onDrop: (
     event: React.DragEvent<HTMLDivElement>,
     newStatus: TaskStatusEnum,
   ) => void;
   onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+  handleDeleteTask: (taskId: number) => Promise<void>;
 }
 
 const TaskDropColumn: React.FC<IProps> = (props) => {
@@ -27,6 +28,7 @@ const TaskDropColumn: React.FC<IProps> = (props) => {
     onDrop,
     onDragOver,
     onDragStart,
+    handleDeleteTask,
   } = props;
 
   return (
@@ -57,6 +59,7 @@ const TaskDropColumn: React.FC<IProps> = (props) => {
             userDropdownItems={userDropdownItems}
             onDragStart={onDragStart}
             onChange={onItemChanged}
+            handleDeleteTask={handleDeleteTask}
           />
         ))}
     </Grid>

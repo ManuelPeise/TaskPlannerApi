@@ -15,6 +15,8 @@ const TaskTableColumnHeader: React.FC<IProps> = (props) => {
     switch (status) {
       case TaskStatusEnum.Created:
         return getResource("labelCreated");
+      case TaskStatusEnum.ReadyToStart:
+        return getResource("labelReadyToStart");
       case TaskStatusEnum.InProgress:
         return getResource("labelInProgress");
       case TaskStatusEnum.Done:

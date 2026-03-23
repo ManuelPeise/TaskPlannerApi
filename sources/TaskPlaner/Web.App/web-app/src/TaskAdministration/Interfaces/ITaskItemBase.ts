@@ -1,7 +1,7 @@
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
 import { TaskTypeEnum } from "../../Lib/Enums/TaskTypeEnum";
 
-export interface ITaskItemProps {
+export interface ITaskItemBase {
   id: number;
   title: string;
   status: TaskStatusEnum;

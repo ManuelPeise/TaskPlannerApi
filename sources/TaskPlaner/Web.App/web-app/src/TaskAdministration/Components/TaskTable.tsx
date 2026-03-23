@@ -3,22 +3,25 @@ import { Grid } from "@mui/material";
 import TaskTableColumnHeader from "./TaskTableColumnHeader";
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
 import TaskDropColumn from "./TaskDropColumn";
-import { ITaskItemProps } from "../Interfaces/ITaskItemProps";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 import { IDropdownItem } from "../../Lib/Interfaces/IDropdownItem";
 
 interface IProps {
-  tasks: ITaskItemProps[];
+  tasks: ITaskItemBase[];
   userDropdownItems: IDropdownItem[];
-  handleTaskChanged: (
-    updatedTask: ITaskItemProps,
-    status: TaskStatusEnum,
-  ) => void;
-  handleAssignUser: (task: ITaskItemProps) => void;
+  handleMoveTask: (updatedTask: ITaskItemBase, status: TaskStatusEnum) => void;
+  handleAssignUser: (task: ITaskItemBase) => void;
+  handleDeleteTask: (taskId: number) => Promise<void>;
 }
 
 const TaskTable: React.FC<IProps> = (props) => {
-  const { tasks, userDropdownItems, handleTaskChanged, handleAssignUser } =
-    props;
+  const {
+    tasks,
+    userDropdownItems,
+    handleMoveTask,
+    handleAssignUser,
+    handleDeleteTask,
+  } = props;
 
   const handleDragStart = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>, taskId: number) => {
@@ -45,10 +48,10 @@ const TaskTable: React.FC<IProps> = (props) => {
       const task = tasks.find((t) => t.id === taskId) || null;
 
       if (task && task.status !== newStatus) {
-        handleTaskChanged(task, newStatus);
+        handleMoveTask(task, newStatus);
       }
     },
-    [tasks, handleTaskChanged],
+    [tasks, handleMoveTask],
   );
 
   return (
@@ -62,7 +65,7 @@ const TaskTable: React.FC<IProps> = (props) => {
       alignItems="center"
       marginTop={4}
     >
-      <Grid size={4} spacing={1} bgcolor="#f2f2f2">
+      <Grid size={3} spacing={1} bgcolor="#f2f2f2">
         <TaskTableColumnHeader status={TaskStatusEnum.Created} />
         <TaskDropColumn
           columnId={TaskStatusEnum.Created}
@@ -72,21 +75,36 @@ const TaskTable: React.FC<IProps> = (props) => {
           onDragStart={handleDragStart}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
+          handleDeleteTask={handleDeleteTask}
         />
       </Grid>
-      <Grid size={4} spacing={1} bgcolor="#f2f2f2">
+      <Grid size={3} spacing={1} bgcolor="#f2f2f2">
+        <TaskTableColumnHeader status={TaskStatusEnum.ReadyToStart} />
+        <TaskDropColumn
+          columnId={TaskStatusEnum.ReadyToStart}
+          tasks={tasks}
+          userDropdownItems={userDropdownItems}
+          onItemChanged={handleAssignUser}
+          onDragStart={handleDragStart}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          handleDeleteTask={handleDeleteTask}
+        />
+      </Grid>
+      <Grid size={3} spacing={1} bgcolor="#f2f2f2">
         <TaskTableColumnHeader status={TaskStatusEnum.InProgress} />
         <TaskDropColumn
           columnId={TaskStatusEnum.InProgress}
           tasks={tasks}
           userDropdownItems={userDropdownItems}
-          onItemChanged={() => {}}
+          onItemChanged={handleAssignUser}
           onDragStart={handleDragStart}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
+          handleDeleteTask={handleDeleteTask}
         />
       </Grid>
-      <Grid size={4} spacing={1} bgcolor="#f2f2f2">
+      <Grid size={3} spacing={1} bgcolor="#f2f2f2">
         <TaskTableColumnHeader status={TaskStatusEnum.Done} />
         <TaskDropColumn
           columnId={TaskStatusEnum.Done}
@@ -96,6 +114,7 @@ const TaskTable: React.FC<IProps> = (props) => {
           onDragStart={handleDragStart}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
+          handleDeleteTask={handleDeleteTask}
         />
       </Grid>
     </Grid>

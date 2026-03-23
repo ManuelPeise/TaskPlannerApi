@@ -7,7 +7,9 @@ namespace Shared.Models.Tasks
     {
         public int TaskId { get; set; }
         public string Title { get; set; } = string.Empty;
+        public string ShortDescription { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string? AcceptanceCreteria { get; set; }
         public TaskTypeEnum TaskType { get; set; } = TaskTypeEnum.All;
         public TaskStatusEnum Status { get; set; } = TaskStatusEnum.Created;
         public TaskPriorityEnum Priority { get; set; } = TaskPriorityEnum.Medium;
@@ -20,7 +22,5 @@ namespace Shared.Models.Tasks
         public string CreatedBy { get; set; } = string.Empty;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public string UpdatedBy { get; set; } = string.Empty;
-        public int? GitRepositoryId { get; set; }
-        public GitRepositoryModel? GitRepository { get; set; }
     }
 }
