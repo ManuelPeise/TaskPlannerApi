@@ -5,6 +5,6 @@
         Created = 0,
         ReadyToStart = 1,
         InProgress = 2,
-        Done = 3,
+        Completed = 3,
     }
 }

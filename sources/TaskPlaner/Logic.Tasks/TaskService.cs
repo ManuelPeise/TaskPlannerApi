@@ -3,8 +3,10 @@ using Logic.Shared.Interfaces;
 using Logic.Tasks.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Shared.Enums;
+using Shared.Models.Email;
 using Shared.Models.Tasks;
 using Shared.Models.Ui;
+using Shared.Models.User;
 
 namespace Logic.Tasks
 {
@@ -13,15 +15,20 @@ namespace Logic.Tasks
         private readonly ILogger<TaskService> _logger;
         private readonly ITaskUnitOfWork _taskUnitOfWork;
         private readonly IUserUnitOfWork _userUnitOfWork;
+        private readonly IEmailClient _emailClient;
+
         public TaskService(
             IHttpContextAccessor httpContextAccessor,
             ITaskUnitOfWork tasknitOfWork,
             IUserUnitOfWork userUnitOfWork,
+            IEmailClient emailClient,
             ILogger<TaskService> logger) : base(httpContextAccessor, userUnitOfWork)
         {
             _taskUnitOfWork = tasknitOfWork;
             _userUnitOfWork = userUnitOfWork;
             _logger = logger;
+            _emailClient = emailClient;
+
         }
 
         public async Task<TaskPageModel> GetTaskPageModel()
@@ -51,6 +58,73 @@ namespace Logic.Tasks
                 await _logger.LogMessageAsync("An error occurred while loading task page model.", LogMessageTypeEnum.Error, exception);
 
                 return pageModel;
+            }
+        }
+
+        public async Task<TaskDetailsPageModel> GetTaskDetailsPageModel(int taskId)
+        {
+            var pageModel = new TaskDetailsPageModel();
+
+            try
+            {
+                var task = await _taskUnitOfWork.GetTaskById(taskId);
+
+                if (task == null)
+                {
+                    throw new InvalidOperationException($"Task with id [{taskId}] was not found in database.");
+                }
+
+                pageModel.UserDropdownItems = await GetUserDropdownItemsAsync();
+                pageModel.StatusDropdownItems = GetStatusDropdownItems();
+                pageModel.PriorityDropdownItems = GetPriorityDropdownItems();
+
+                pageModel.Task = new TaskModel
+                {
+                    TaskId = task.Id,
+                    Title = task.Title,
+                    ShortDescription = task.ShortDescription,
+                    Description = task.Description,
+                    AcceptanceCreteria = task.AcceptanceCriteria,
+                    TaskType = task.TaskType,
+                    Status = task.Status,
+                    Priority = task.Priority,
+                    DeadLineDate = task.DeadLineDate,
+                    AssignedUserId = task.UserId,
+                    AssignedUser = task.AssignedUser == null ? null : new UserModel
+                    {
+                        Id = task.AssignedUser.Id,
+                        Name = task.AssignedUser.Name,
+                        LastName = task.AssignedUser.LastName,
+                        EmailAddress = task.AssignedUser.EmailAddress,
+                        UserRole = task.AssignedUser.UserRole
+                    },
+                    ParentTaskId = task.ParentTaskId,
+                    SubTasks = task.SubTasks?.Select(st => new TaskModel
+                    {
+                        TaskId = st.Id,
+                        ShortDescription = st.ShortDescription,
+                        Description = st.Description,
+                        AcceptanceCreteria = st.AcceptanceCriteria,
+                        TaskType = st.TaskType,
+                        Status = st.Status,
+                        Priority = st.Priority,
+                        DeadLineDate = st.DeadLineDate,
+                        AssignedUserId = st.UserId,
+                    }).ToList() ?? new List<TaskModel>(),
+                    CreatedAt = task.CreatedAt,
+                    CreatedBy = task.CreatedBy,
+                    UpdatedAt = task.UpdatedAt,
+                    UpdatedBy = task.UpdatedBy
+                };
+
+                return pageModel;
+            }
+            catch (Exception exception)
+            {
+                await _logger.LogMessageAsync($"An error occurred while loading task with id [{taskId}].", LogMessageTypeEnum.Error, exception);
+
+                return pageModel;
+
             }
         }
 
@@ -111,6 +185,8 @@ namespace Logic.Tasks
                     throw new InvalidOperationException($"Updating task [{model.Id}] failed, task not found in database.");
                 }
 
+                var potentialUnassignedUser = task.UserId;
+
                 task.Title = model.Title;
                 task.ShortDescription = model.ShortDescription;
                 task.TaskType = model.TaskTypeId;
@@ -118,6 +194,11 @@ namespace Logic.Tasks
                 task.UserId = model.AssignedUserId == 0 ? null : model.AssignedUserId;
 
                 await _taskUnitOfWork.SaveChangesAsync();
+
+                if (potentialUnassignedUser != task.UserId)
+                {
+                    await SendTaskNotifications(task.UserId ?? 0, potentialUnassignedUser ?? 0, task.Id);
+                }
 
                 return new TaskItemBase
                 {
@@ -180,9 +261,29 @@ namespace Logic.Tasks
             }
         }
 
+        private async Task SendTaskNotifications(int assignedUserId, int unassignedUserId, int taskId)
+        {
+            var unassigned = await _userUnitOfWork.GetUserById(unassignedUserId, false, false);
+
+            if (unassigned != null)
+            {
+#if !DEBUG
+                        await _emailClient.SendMail(GetTaskUnassignedEmailContent(task.Id, $"{unassigned.Name} {unassigned.LastName}"), unassigned.EmailAddress);
+#endif
+            }
+
+            var assignedUser = await _userUnitOfWork.GetUserById(assignedUserId, false, false);
+
+            if (assignedUser != null)
+            {
+#if !DEBUG
+                        await _emailClient.SendMail(GetTaskAssignedEmailContent(task.Id, $"{assignedUser.Name} {assignedUser.LastName}"), assignedUser.EmailAddress);
+#endif
+            }
+        }
         private async Task<List<DropdownItem>> GetUserDropdownItemsAsync()
         {
-            var dropdownItems = new List<DropdownItem> { new DropdownItem { Id = 0, Label = "labelSelectUser" } };
+            var dropdownItems = new List<DropdownItem> { new DropdownItem { Id = 0, Label = "labelUnassigned" } };
 
             var users = await _userUnitOfWork.GetUsers(false, false);
 
@@ -193,6 +294,61 @@ namespace Logic.Tasks
             }));
 
             return dropdownItems;
+        }
+
+        private List<DropdownItem> GetStatusDropdownItems()
+        {
+            var items = new List<DropdownItem> {
+                new DropdownItem { Id = (int)TaskStatusEnum.Created, Label = "labelCreated" },
+                new DropdownItem { Id = (int)TaskStatusEnum.ReadyToStart, Label = "labelReadyToStart" },
+                new DropdownItem { Id = (int)TaskStatusEnum.InProgress, Label = "labelInProgress" },
+                new DropdownItem { Id = (int)TaskStatusEnum.Completed, Label = "labelCompleted" },
+
+            };
+
+            return items;
+        }
+
+        private List<DropdownItem> GetPriorityDropdownItems()
+        {
+            var items = new List<DropdownItem> {
+                new DropdownItem { Id = (int)TaskPriorityEnum.None, Label = "labelNone" },
+                new DropdownItem { Id = (int)TaskPriorityEnum.Low, Label = "labelLow" },
+                new DropdownItem { Id = (int)TaskPriorityEnum.Medium, Label = "labelMedium" },
+                new DropdownItem { Id = (int)TaskPriorityEnum.High, Label = "labelHigh" },
+
+            };
+            
+            return items;
+        }
+        private EmailContent GetTaskAssignedEmailContent(int taskId, string name)
+        {
+            return new EmailContent
+            {
+                Subject = $"New task #{taskId} was assigned to you.",
+                Text = $@"
+<p>Dear {name},</p>
+<p></p>
+<p>There is a new task #{taskId} assigned to you.</p>
+<p></p>
+<p>Please log in to the system to view the task details and start working on it.</p>
+"
+            };
+        }
+
+        private EmailContent GetTaskUnassignedEmailContent(int taskId, string name)
+        {
+            return new EmailContent
+            {
+                Subject = $"Task #{taskId} was unassigned from you.",
+                Text = $@"
+<p>Dear {name},</p>
+<p></p>
+<p>Task #{taskId} has been unassigned from you.</p>
+<p></p>
+
+"
+            };
         }
     }
 }

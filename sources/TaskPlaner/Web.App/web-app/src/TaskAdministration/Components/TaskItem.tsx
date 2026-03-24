@@ -4,10 +4,12 @@ import { DeleteOutline, MoreVertRounded } from "@mui/icons-material";
 import { IDropdownItem } from "../../Lib/Interfaces/IDropdownItem";
 import FormDropdown from "../../Components/FormDropdown";
 import { useAuth } from "../../Hooks/useAuth";
-import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
+
 import FormLabel from "../../Components/FormLabel";
 import { useLocalization } from "../../Hooks/useLocalization";
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
+import { useNavigate } from "react-router-dom";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 
 interface IProps {
   task: ITaskItemBase;
@@ -22,21 +24,25 @@ const TaskItem: React.FC<IProps> = (props) => {
     props;
   const { currentUser } = useAuth();
   const { getResource } = useLocalization();
-  const canEdit = React.useMemo(() => {
-    return (
-      currentUser?.accessRights.find(
-        (right) => right.name === "TasksAdministration",
-      )?.canEdit ?? false
+  const navigate = useNavigate();
+
+  const { canView, canEdit, canDelete } = React.useMemo(() => {
+    const userRight = currentUser?.accessRights.find(
+      (right) => right.name === "TasksAdministration",
     );
+
+    return {
+      canView: userRight?.canView ?? false,
+      canEdit: userRight?.canEdit ?? false,
+      canDelete: userRight?.canDelete ?? false,
+    };
   }, [currentUser]);
 
-  const canDelete = React.useMemo(() => {
-    return (
-      currentUser?.accessRights.find(
-        (right) => right.name === "TasksAdministration",
-      )?.canDelete ?? false
-    );
-  }, [currentUser]);
+  const navigateToDetails = React.useCallback(() => {
+    if (canView) {
+      navigate(`/task-administration/details/${task.id}`);
+    }
+  }, [canView, navigate, task.id]);
 
   return (
     <Card
@@ -56,19 +62,25 @@ const TaskItem: React.FC<IProps> = (props) => {
           <Grid size={12} display="flex" justifyContent="space-between">
             <Grid size={10}>
               <FormLabel
+                bold
                 text={`#${task.id} - ${task.title}`}
                 variant="subtitle2"
               />
             </Grid>
-            <Grid size={1}>
+            <Grid size={1} paddingRight={5}>
               <Tooltip
                 title={
-                  canEdit
+                  canView
                     ? getResource("labelViewTask")
                     : getResource("labelMissingPermission")
                 }
               >
-                <IconButton size="medium" color="primary" disabled={!canEdit}>
+                <IconButton
+                  size="medium"
+                  color="primary"
+                  disabled={!canView}
+                  onClick={navigateToDetails}
+                >
                   <MoreVertRounded fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -107,7 +119,7 @@ const TaskItem: React.FC<IProps> = (props) => {
                 ) || userDropdownItems[0]
               }
               dropdownItems={userDropdownItems}
-              disabled={!canEdit || task.status === TaskStatusEnum.Done}
+              disabled={!canEdit || task.status === TaskStatusEnum.Completed}
               onChange={
                 canEdit
                   ? (selectedItem) =>

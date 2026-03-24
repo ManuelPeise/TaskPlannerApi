@@ -137,7 +137,9 @@ namespace Logic.Shared
             }
 
             existingTask.Title = taskModel.Title;
+            existingTask.ShortDescription = taskModel.ShortDescription;
             existingTask.Description = taskModel.Description;
+            existingTask.AcceptanceCriteria = taskModel.AcceptanceCreteria ?? string.Empty;
             existingTask.TaskType = taskModel.TaskType;
             existingTask.Status = taskModel.Status;
             existingTask.Priority = taskModel.Priority;

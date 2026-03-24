@@ -21,6 +21,13 @@ namespace Service.Api.ApiControllers.Tasks
         }
 
         [JwtAuthentication]
+        [HttpGet(Name = "GetTaskDetailsPageModel")]
+        public async Task<TaskDetailsPageModel> GetTaskDetailsPageModel([FromQuery] int taskId)
+        {
+            return await _taskService.GetTaskDetailsPageModel(taskId);
+        }
+
+        [JwtAuthentication]
         [HttpPost(Name = "AddTask")]
         public async Task<List<TaskItemBase>> AddTask([FromBody] TaskItemBase taskItemBase)
         {

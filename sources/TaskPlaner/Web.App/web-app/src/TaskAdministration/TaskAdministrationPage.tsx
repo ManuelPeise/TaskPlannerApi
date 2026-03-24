@@ -2,18 +2,21 @@ import React from "react";
 import useLocalStorage, { LocalStorageKeys } from "../Hooks/useLocalStorage";
 import useStateFulApiService from "../Hooks/useStateFulApiService";
 import { ITokenData } from "../Lib/Interfaces/ITokenData";
-import { ITaskPageModel } from "./Interfaces/ITaskPageModel";
+
 import { Grid } from "@mui/material";
 import { IDropdownItem } from "../Lib/Interfaces/IDropdownItem";
 import TaskToolbar from "./Components/TaskToolbar";
 import TaskTable from "./Components/TaskTable";
-import { ITaskFilterOptions } from "./Interfaces/ITaskFilterOptions";
+
 import { TaskTypeEnum } from "../Lib/Enums/TaskTypeEnum";
-import { ITaskItemBase } from "./Interfaces/ITaskItemBase";
+
 import { useLocalization } from "../Hooks/useLocalization";
 import { TaskStatusEnum } from "../Lib/Enums/TaskStatusEnum";
 import useStatelessApi from "../Hooks/useStatelessApi";
 import LoadingIndicator from "../Components/LoadingIndicator";
+import { ITaskFilterOptions } from "./Interfaces/ITaskFilterOptions";
+import { ITaskItemBase } from "./Interfaces/ITaskItemBase";
+import { ITaskPageModel } from "./Interfaces/ITaskPageModel";
 
 interface IProps {
   isLoading: boolean;

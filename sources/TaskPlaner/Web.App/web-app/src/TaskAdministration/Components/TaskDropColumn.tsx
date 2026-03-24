@@ -1,9 +1,9 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
-import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 import TaskItem from "./TaskItem";
 import { IDropdownItem } from "../../Lib/Interfaces/IDropdownItem";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 
 interface IProps {
   columnId: TaskStatusEnum;

@@ -1,13 +1,13 @@
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import React from "react";
-import { ITaskFilterOptions } from "../Interfaces/ITaskFilterOptions";
 import { IDropdownItem } from "../../Lib/Interfaces/IDropdownItem";
 import { useLocalization } from "../../Hooks/useLocalization";
 import FormDropdown from "../../Components/FormDropdown";
 import { AddRounded } from "@mui/icons-material";
 import { TaskTypeEnum } from "../../Lib/Enums/TaskTypeEnum";
-import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 import AddTaskDialog from "./AddTaskDialog";
+import { ITaskFilterOptions } from "../Interfaces/ITaskFilterOptions";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 
 interface IProps {
   isloading: boolean;

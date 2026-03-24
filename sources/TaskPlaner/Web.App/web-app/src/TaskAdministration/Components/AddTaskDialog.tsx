@@ -1,5 +1,4 @@
 import React from "react";
-import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 import {
   Dialog,
   DialogActions,
@@ -13,6 +12,7 @@ import FormButton from "../../Components/FormButton";
 import FormTextInput from "../../Components/FormTextInput";
 import FormDropdown from "../../Components/FormDropdown";
 import { TaskTypeEnum } from "../../Lib/Enums/TaskTypeEnum";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 
 interface IProps {
   open: boolean;
@@ -79,7 +79,7 @@ export const AddTaskDialog: React.FC<IProps> = (props) => {
 
   return (
     <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-      <DialogTitle>{getResource("titleAddTask")}</DialogTitle>
+      <DialogTitle>{getResource("captionAddTask")}</DialogTitle>
       <DialogContent>
         <Grid size={12} container spacing={2} paddingTop={3}>
           <Grid size={12}>

@@ -2,7 +2,6 @@ import { TaskPriorityEnum } from "../../Lib/Enums/TaskPriorityEnum";
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
 import { TaskTypeEnum } from "../../Lib/Enums/TaskTypeEnum";
 import { IUserData } from "../../Lib/Interfaces/IUserData";
-import { IGitRepositoryModel } from "./IGitRepositoryModel";
 
 export interface ITaskModel {
   taskId: number;
@@ -18,10 +17,8 @@ export interface ITaskModel {
   assignedUser?: IUserData;
   parentTaskId?: number;
   subTasks: ITaskModel[];
-  createdAt: string;
+  createdAt: Date;
   createdBy: string;
-  updatedAt: string;
+  updatedAt: Date;
   updatedBy: string;
-  gitRepositoryId?: number;
-  gitRepository?: IGitRepositoryModel;
 }

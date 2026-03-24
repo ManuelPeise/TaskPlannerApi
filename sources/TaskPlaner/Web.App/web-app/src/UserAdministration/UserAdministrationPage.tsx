@@ -131,7 +131,7 @@ const UserAdministrationPage: React.FC<IProps> = (props) => {
         <Grid size={6} display="flex" justifyContent="flex-end">
           <IconButton size="small" onClick={() => setAddUserDialogOpen(true)}>
             <Tooltip title={getResource("labelAddNewUser")}>
-              <AddRounded sx={{ fontSize: 40, color: "#555" }} />
+              <AddRounded sx={{ fontSize: 30, color: "#555" }} />
             </Tooltip>
           </IconButton>
         </Grid>

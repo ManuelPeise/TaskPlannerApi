@@ -3,8 +3,8 @@ import { Grid } from "@mui/material";
 import TaskTableColumnHeader from "./TaskTableColumnHeader";
 import { TaskStatusEnum } from "../../Lib/Enums/TaskStatusEnum";
 import TaskDropColumn from "./TaskDropColumn";
-import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 import { IDropdownItem } from "../../Lib/Interfaces/IDropdownItem";
+import { ITaskItemBase } from "../Interfaces/ITaskItemBase";
 
 interface IProps {
   tasks: ITaskItemBase[];
@@ -105,9 +105,9 @@ const TaskTable: React.FC<IProps> = (props) => {
         />
       </Grid>
       <Grid size={3} spacing={1} bgcolor="#f2f2f2">
-        <TaskTableColumnHeader status={TaskStatusEnum.Done} />
+        <TaskTableColumnHeader status={TaskStatusEnum.Completed} />
         <TaskDropColumn
-          columnId={TaskStatusEnum.Done}
+          columnId={TaskStatusEnum.Completed}
           tasks={tasks}
           userDropdownItems={userDropdownItems}
           onItemChanged={() => {}}
