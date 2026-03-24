@@ -4,8 +4,7 @@ namespace Shared.Models.Tasks
 {
     public class TaskPageModel
     {
-        public List<TaskModel> TaskModels { get; set; } = new List<TaskModel>();
-        public List<DropdownItem> GitDropdownItems { get; set; } = new List<DropdownItem>();
+        public List<TaskItemBase> TaskModels { get; set; } = new List<TaskItemBase>();
         public List<DropdownItem> UserDropdownItems { get; set; } = new List<DropdownItem>();
     }
 }

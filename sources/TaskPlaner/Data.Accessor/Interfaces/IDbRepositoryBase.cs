@@ -15,7 +15,7 @@ namespace Data.Accessor.Interfaces
             bool asNoTracking = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes);
 
-        Task<HashSet<TEntity>> GetById(
+        Task<TEntity?> GetById(
             int id,
             bool asNoTracking = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes);

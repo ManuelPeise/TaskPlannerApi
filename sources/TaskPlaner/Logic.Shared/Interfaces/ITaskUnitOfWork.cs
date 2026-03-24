@@ -1,12 +1,12 @@
-﻿using Shared.Models.Tasks;
+﻿using Data.Entities.Tasks;
+using Shared.Models.Tasks;
 
 namespace Logic.Shared.Interfaces
 {
     public interface ITaskUnitOfWork
     {
         Task<List<TaskModel>> GetAllTasks();
-        Task<TaskModel?> GetTaskById(int id);
-        Task<List<GitRepositoryModel>> GetGitRepositories(int userId);
+        Task<TaskEntity?> GetTaskById(int id);
         Task AddTask(TaskModel taskModel);
         Task UpdateTask(TaskModel taskModel);
         Task DeleteTask(int taskId);

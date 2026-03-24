@@ -2,6 +2,8 @@ import { Button } from "@mui/material";
 import React from "react";
 
 interface IProps {
+  size?: "small" | "medium" | "large";
+  variant?: "text" | "outlined" | "contained";
   label: string;
   disabled?: boolean;
   fullWidth?: boolean;
@@ -9,14 +11,15 @@ interface IProps {
 }
 
 const FormButton: React.FC<IProps> = (props) => {
-  const { label, disabled, fullWidth, action } = props;
+  const { size, variant, label, disabled, fullWidth, action } = props;
 
   return (
     <Button
+      size={size ?? "medium"}
       onClick={action}
       disabled={disabled}
-      variant="contained"
-      fullWidth={fullWidth ?? true}
+      variant={variant ?? "contained"}
+      fullWidth={fullWidth ?? false}
     >
       {label}
     </Button>

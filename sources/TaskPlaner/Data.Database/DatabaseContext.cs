@@ -1,6 +1,5 @@
 ﻿using Data.Database.Seeds;
 using Data.Entities.Administration;
-using Data.Entities.Git;
 using Data.Entities.Tasks;
 using Data.Entities.User;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +34,5 @@ namespace Data.Database
         public DbSet<UserEntity> UserTable { get; set; }
         public DbSet<UserCredentialsEntity> UserCredentialsTable { get; set; }
         public DbSet<TaskEntity> TaskTable { get; set; }
-        public DbSet<GitRepositoryEntity> GitRepositoryTable { get; set; }
-        public DbSet<GitRepositoryCredentialsEntity> GitRepositoryCredentials { get; set; }
     }
 }

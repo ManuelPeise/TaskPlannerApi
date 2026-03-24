@@ -16,14 +16,20 @@ interface IProps {
     | "subtitle2";
   marginTop?: number;
   color?: string;
+  bold?: boolean;
 }
 
 const FormLabel: React.FC<IProps> = (props) => {
-  const { text, variant, marginTop, color } = props;
+  const { text, variant, marginTop, color, bold } = props;
   return (
     <Typography
       variant={variant}
-      sx={{ marginBottom: 1, marginTop: marginTop, color: color }}
+      sx={{
+        marginBottom: 1,
+        marginTop: marginTop,
+        color: color,
+        fontWeight: bold ? "bold" : "normal",
+      }}
     >
       {text}
     </Typography>

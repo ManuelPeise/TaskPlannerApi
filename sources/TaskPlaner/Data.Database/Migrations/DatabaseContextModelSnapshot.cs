@@ -57,7 +57,7 @@ namespace Data.Database.Migrations
                             AccessRightGuid = new Guid("91cb6210-1990-4e46-94cd-1972fd40e9d3"),
                             CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "System",
-                            Name = "Tasks",
+                            Name = "TasksAdministration",
                             UpdatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UpdatedBy = "System"
                         },
@@ -68,6 +68,16 @@ namespace Data.Database.Migrations
                             CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "System",
                             Name = "UserAdministration",
+                            UpdatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedBy = "System"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessRightGuid = new Guid("b6f8c1d2-3e4f-4a5b-9c6d-7e8f9a0b1c2d"),
+                            CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "System",
+                            Name = "Dashboard",
                             UpdatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UpdatedBy = "System"
                         });
@@ -168,86 +178,15 @@ namespace Data.Database.Migrations
                     b.ToTable("UserAccessRightEntity");
                 });
 
-            modelBuilder.Entity("Data.Entities.Git.GitRepositoryCredentialsEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GitRepositoryCredentials");
-                });
-
-            modelBuilder.Entity("Data.Entities.Git.GitRepositoryEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("GitRepositoryCredentialsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Url")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserEntityId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GitRepositoryCredentialsId");
-
-                    b.HasIndex("UserEntityId");
-
-                    b.ToTable("GitRepositoryTable");
-                });
-
             modelBuilder.Entity("Data.Entities.Tasks.TaskEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<string>("AcceptanceCriteria")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -263,14 +202,15 @@ namespace Data.Database.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("GitRepositoryId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ParentTaskId")
                         .HasColumnType("int");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
+
+                    b.Property<string>("ShortDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -293,8 +233,6 @@ namespace Data.Database.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GitRepositoryId");
 
                     b.HasIndex("ParentTaskId");
 
@@ -403,27 +341,8 @@ namespace Data.Database.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Data.Entities.Git.GitRepositoryEntity", b =>
-                {
-                    b.HasOne("Data.Entities.Git.GitRepositoryCredentialsEntity", "GitRepositoryCredentials")
-                        .WithMany()
-                        .HasForeignKey("GitRepositoryCredentialsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Entities.User.UserEntity", null)
-                        .WithMany("GitRepositories")
-                        .HasForeignKey("UserEntityId");
-
-                    b.Navigation("GitRepositoryCredentials");
-                });
-
             modelBuilder.Entity("Data.Entities.Tasks.TaskEntity", b =>
                 {
-                    b.HasOne("Data.Entities.Git.GitRepositoryEntity", "GitRepository")
-                        .WithMany()
-                        .HasForeignKey("GitRepositoryId");
-
                     b.HasOne("Data.Entities.Tasks.TaskEntity", null)
                         .WithMany("SubTasks")
                         .HasForeignKey("ParentTaskId")
@@ -435,8 +354,6 @@ namespace Data.Database.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AssignedUser");
-
-                    b.Navigation("GitRepository");
                 });
 
             modelBuilder.Entity("Data.Entities.User.UserEntity", b =>
@@ -463,8 +380,6 @@ namespace Data.Database.Migrations
             modelBuilder.Entity("Data.Entities.User.UserEntity", b =>
                 {
                     b.Navigation("AccessRights");
-
-                    b.Navigation("GitRepositories");
                 });
 #pragma warning restore 612, 618
         }

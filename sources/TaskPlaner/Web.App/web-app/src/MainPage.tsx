@@ -11,6 +11,8 @@ import UserAdministrationPageContainer from "./UserAdministration/UserAdministra
 import UserDetailsPageContainer from "./UserAdministration/UserDetails/UserDetailsPage";
 import UserActivationPageContainer from "./UserAdministration/UserActivation/UserActivationPage";
 import { useAuth } from "./Hooks/useAuth";
+import TaskAdministrationPageContainer from "./TaskAdministration/TaskAdministrationPage";
+import TaskDetailsPageContainer from "./TaskAdministration/TaskDetails/TaskDetailsPage";
 interface IProps {}
 
 const PrivateRoute: React.FC = () => {
@@ -38,6 +40,15 @@ const MainPage: React.FC<IProps> = () => {
               path="/user-administration/details/:userId"
               element={<UserDetailsPageContainer />}
             />
+            <Route
+              path="/task-administration"
+              element={<TaskAdministrationPageContainer />}
+            />
+            <Route
+              path="/task-administration/details/:taskId"
+              element={<TaskDetailsPageContainer />}
+            />
+            <Route path="/dashboard" element={<div>Dashboard</div>} />
           </Route>
           <Route path="/account" element={<PublicRoute />}>
             <Route

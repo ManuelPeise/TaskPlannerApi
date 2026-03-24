@@ -21,10 +21,24 @@ namespace Service.Api.ApiControllers.Tasks
         }
 
         [JwtAuthentication]
-        [HttpPost(Name = "AddTask")]
-        public async Task AddTask([FromBody] TaskModel taskModel)
+        [HttpGet(Name = "GetTaskDetailsPageModel")]
+        public async Task<TaskDetailsPageModel> GetTaskDetailsPageModel([FromQuery] int taskId)
         {
-            await _taskService.AddTask(taskModel);
+            return await _taskService.GetTaskDetailsPageModel(taskId);
+        }
+
+        [JwtAuthentication]
+        [HttpPost(Name = "AddTask")]
+        public async Task<List<TaskItemBase>> AddTask([FromBody] TaskItemBase taskItemBase)
+        {
+            return await _taskService.AddTask(taskItemBase);
+        }
+
+        [JwtAuthentication]
+        [HttpPost(Name = "UpdateTaskBase")]
+        public async Task<TaskItemBase?> UpdateTaskBase([FromBody] TaskItemBase model)
+        {
+            return await _taskService.UpdateTaskBase(model);
         }
 
         [JwtAuthentication]
@@ -36,9 +50,9 @@ namespace Service.Api.ApiControllers.Tasks
 
         [JwtAuthentication]
         [HttpPost(Name = "DeleteTask")]
-        public async Task DeleteTask([FromQuery] int taskId)
+        public async Task<List<TaskItemBase>> DeleteTask([FromQuery] int taskId)
         {
-            await _taskService.DeleteTask(taskId);
+            return await _taskService.DeleteTask(taskId);
         }
     }
 }

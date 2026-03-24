@@ -3,15 +3,16 @@ import React from "react";
 
 interface IProps {
   value: string;
-  label: string;
+  label?: string;
   type: "text" | "password";
   fullWidth?: boolean;
+  maxWidth?: number;
   disabled?: boolean;
   onChange: (value: string) => void;
 }
 
 const FormTextInput: React.FC<IProps> = (props) => {
-  const { value, label, type, fullWidth, disabled, onChange } = props;
+  const { value, label, type, fullWidth, maxWidth, disabled, onChange } = props;
 
   return (
     <TextField
@@ -22,6 +23,7 @@ const FormTextInput: React.FC<IProps> = (props) => {
       variant="standard"
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
+      sx={{ maxWidth: maxWidth ?? "100%" }}
     />
   );
 };

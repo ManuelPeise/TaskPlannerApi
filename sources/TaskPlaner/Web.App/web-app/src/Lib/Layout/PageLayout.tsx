@@ -4,6 +4,7 @@ import AppHeaderBar from "./AppHeaderBar";
 import LoginDialog from "./LoginDialog";
 import { useAuth } from "../../Hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useLocalization } from "../../Hooks/useLocalization";
 
 interface INavigationItem {
   label: string;
@@ -17,6 +18,7 @@ const PageLayout: React.FC<IProps> = (props) => {
   const { currentUser, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { getResource } = useLocalization();
 
   const isPrivate = React.useMemo(() => {
     return !/^\/account\/activate\/.+/.test(location.pathname);
@@ -26,7 +28,26 @@ const PageLayout: React.FC<IProps> = (props) => {
     const items: INavigationItem[] = [];
 
     items.push({
-      label: "User Administration",
+      label: getResource("labelDashboard"),
+      route: "/dashboard",
+      isDisabled:
+        !isAuthenticated ||
+        !currentUser?.accessRights.find((ar) => ar.name === "Dashboard")
+          ?.canView,
+    });
+
+    items.push({
+      label: getResource("labelTaskAdministration"),
+      route: "/task-administration",
+      isDisabled:
+        !isAuthenticated ||
+        !currentUser?.accessRights.find(
+          (ar) => ar.name === "TasksAdministration",
+        )?.canView,
+    });
+
+    items.push({
+      label: getResource("labelUserAdministration"),
       route: "/user-administration",
       isDisabled:
         !isAuthenticated ||
@@ -34,8 +55,9 @@ const PageLayout: React.FC<IProps> = (props) => {
           (ar) => ar.name === "UserAdministration",
         )?.canView,
     });
+
     return items;
-  }, [isAuthenticated, currentUser]);
+  }, [isAuthenticated, currentUser, getResource]);
 
   React.useEffect(() => {
     if (isPrivate && !isAuthenticated) {
@@ -52,7 +74,10 @@ const PageLayout: React.FC<IProps> = (props) => {
         />
       </Grid>
       <Grid size={12} display="flex">
-        <Grid size={2} sx={{ backgroundColor: "#000000", height: "93vh" }}>
+        <Grid
+          size={2}
+          sx={{ backgroundColor: "#000000", height: "93vh", minWidth: 250 }}
+        >
           <Grid size={12}>
             <Divider sx={{ backgroundColor: "#ffffff", height: 1 }} />
             <List disablePadding>
@@ -64,7 +89,7 @@ const PageLayout: React.FC<IProps> = (props) => {
                       color: "#ffffff",
                       padding: 2,
                       "&.Mui-selected": { backgroundColor: "#474343" },
-                      "&:hover": { color: "#e9e0e000" },
+                      "&:hover": { color: "#ffffff" },
                     }}
                     disabled={item.isDisabled}
                     onClick={() => navigate(item.route)}

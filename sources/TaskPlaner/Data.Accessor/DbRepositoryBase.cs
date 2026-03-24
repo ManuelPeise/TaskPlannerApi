@@ -62,7 +62,7 @@ namespace Data.Accessor
             return await table.ToHashSetAsync();
         }
 
-        public async Task<HashSet<TEntity>> GetById(
+        public async Task<TEntity?> GetById(
             int id,
             bool asNoTracking = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes)
@@ -82,7 +82,7 @@ namespace Data.Accessor
                 }
             }
 
-            return await table.Where(e => e.Id == id).ToHashSetAsync();
+            return await table.FirstOrDefaultAsync(e => e.Id == id)??null;
         }
 
         public async Task Insert(TEntity entity, Expression<Func<TEntity, bool>>? predicate)
