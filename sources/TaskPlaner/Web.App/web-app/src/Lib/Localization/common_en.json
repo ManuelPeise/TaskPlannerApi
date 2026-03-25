@@ -74,5 +74,16 @@
   "labelStatus": "Status",
   "labelChoosDate": "Choose Date",
   "labelSaveAndClose": "Save & Close",
-  "labelPriority": "Priority"
+  "labelPriority": "Priority",
+  "labelLogMessages": "Log Messages",
+  "labelInfo": "Info",
+  "labelWarning": "Warning",
+  "labelError": "Error",
+  "labelCount": "Count",
+  "labelUsers": "Users",
+  "labelActive": "Active",
+  "labelInactive": "Inactive",
+  "labelTaskControllerPerformance": "Task Controller Performance",
+  "labelUpdateTask": "Update Task",
+  "labelUpdateTaskBase": "Update Task Base"
 }

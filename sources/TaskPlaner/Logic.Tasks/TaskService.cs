@@ -98,19 +98,6 @@ namespace Logic.Tasks
                         EmailAddress = task.AssignedUser.EmailAddress,
                         UserRole = task.AssignedUser.UserRole
                     },
-                    ParentTaskId = task.ParentTaskId,
-                    SubTasks = task.SubTasks?.Select(st => new TaskModel
-                    {
-                        TaskId = st.Id,
-                        ShortDescription = st.ShortDescription,
-                        Description = st.Description,
-                        AcceptanceCreteria = st.AcceptanceCriteria,
-                        TaskType = st.TaskType,
-                        Status = st.Status,
-                        Priority = st.Priority,
-                        DeadLineDate = st.DeadLineDate,
-                        AssignedUserId = st.UserId,
-                    }).ToList() ?? new List<TaskModel>(),
                     CreatedAt = task.CreatedAt,
                     CreatedBy = task.CreatedBy,
                     UpdatedAt = task.UpdatedAt,

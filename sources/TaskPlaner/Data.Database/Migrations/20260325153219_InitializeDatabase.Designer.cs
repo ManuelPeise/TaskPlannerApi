@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20260323152635_InitializeDatabase")]
+    [Migration("20260325153219_InitializeDatabase")]
     partial class InitializeDatabase
     {
         /// <inheritdoc />
@@ -181,6 +181,40 @@ namespace Data.Database.Migrations
                     b.ToTable("UserAccessRightEntity");
                 });
 
+            modelBuilder.Entity("Data.Entities.Statistics.EndpointStatisticEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("ElapsedSeconds")
+                        .HasColumnType("double");
+
+                    b.Property<int>("Endpoint")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EndpointStatisticTable");
+                });
+
             modelBuilder.Entity("Data.Entities.Tasks.TaskEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -204,9 +238,6 @@ namespace Data.Database.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int?>("ParentTaskId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -236,8 +267,6 @@ namespace Data.Database.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentTaskId");
 
                     b.HasIndex("UserId");
 
@@ -346,11 +375,6 @@ namespace Data.Database.Migrations
 
             modelBuilder.Entity("Data.Entities.Tasks.TaskEntity", b =>
                 {
-                    b.HasOne("Data.Entities.Tasks.TaskEntity", null)
-                        .WithMany("SubTasks")
-                        .HasForeignKey("ParentTaskId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Data.Entities.User.UserEntity", "AssignedUser")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -373,11 +397,6 @@ namespace Data.Database.Migrations
             modelBuilder.Entity("Data.Entities.Administration.AccessRightsEntity", b =>
                 {
                     b.Navigation("UserAccessRights");
-                });
-
-            modelBuilder.Entity("Data.Entities.Tasks.TaskEntity", b =>
-                {
-                    b.Navigation("SubTasks");
                 });
 
             modelBuilder.Entity("Data.Entities.User.UserEntity", b =>

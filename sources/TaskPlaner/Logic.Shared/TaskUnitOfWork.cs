@@ -19,7 +19,7 @@ namespace Logic.Shared
 
         private readonly IDbRepositoryBase<UserEntity> _userRepository;
         private readonly IDbRepositoryBase<TaskEntity> _taskRepository;
-        private readonly Func<IQueryable<TaskEntity>, IQueryable<TaskEntity>>[] includeExpression = { q => q.Include(t => t.SubTasks), q => q.Include(t => t.AssignedUser) };
+        private readonly Func<IQueryable<TaskEntity>, IQueryable<TaskEntity>>[] includeExpression = {  q => q.Include(t => t.AssignedUser) };
 
         public TaskUnitOfWork(DatabaseContext databaseContext, IHttpContextAccessor httpContextAccessor)
         {
@@ -56,24 +56,7 @@ namespace Logic.Shared
                     LastName = t.AssignedUser.LastName,
                     EmailAddress = t.AssignedUser.EmailAddress,
                     IsActive = t.AssignedUser.IsActive,
-                } : null,
-                ParentTaskId = t.ParentTaskId,
-                SubTasks = t.SubTasks.Any() ? t.SubTasks.Select(st => new TaskModel
-                {
-                    TaskId = st.Id,
-                    Title = st.Title,
-                    Description = st.Description,
-                    TaskType = st.TaskType,
-                    Status = st.Status,
-                    Priority = st.Priority,
-                    DeadLineDate = st.DeadLineDate,
-                    AssignedUserId = st.UserId,
-                    CreatedAt = st.CreatedAt,
-                    CreatedBy = st.CreatedBy,
-                    UpdatedAt = st.UpdatedAt,
-                    UpdatedBy = st.UpdatedBy
-
-                }).ToList() : new List<TaskModel>(),
+                } : null
             }).ToList();
         }
 
@@ -106,21 +89,6 @@ namespace Logic.Shared
                 UpdatedAt = taskModel.UpdatedAt,
                 UpdatedBy = taskModel.UpdatedBy,
                 UserId = taskModel?.AssignedUserId ?? null,
-                ParentTaskId = taskModel?.ParentTaskId ?? null,
-                SubTasks = taskModel?.SubTasks.Select(st => new TaskEntity
-                {
-                    Title = st.Title,
-                    Description = st.Description,
-                    TaskType = st.TaskType,
-                    Status = st.Status,
-                    Priority = st.Priority,
-                    DeadLineDate = st.DeadLineDate,
-                    UserId = st.AssignedUserId,
-                    CreatedAt = st.CreatedAt,
-                    CreatedBy = st.CreatedBy,
-                    UpdatedAt = st.UpdatedAt,
-                    UpdatedBy = st.UpdatedBy
-                }).ToList() ?? new List<TaskEntity>(),
 
             };
 
@@ -145,32 +113,7 @@ namespace Logic.Shared
             existingTask.Priority = taskModel.Priority;
             existingTask.DeadLineDate = taskModel.DeadLineDate;
             existingTask.UserId = taskModel.AssignedUserId;
-            existingTask.ParentTaskId = taskModel.ParentTaskId;
-
-
-            foreach (var taskEntity in existingTask.SubTasks)
-            {
-                var subTaskModel = taskModel.SubTasks.FirstOrDefault(st => st.TaskId == taskEntity.Id);
-
-                if (subTaskModel != null)
-                {
-                    taskEntity.Title = subTaskModel.Title;
-                    taskEntity.Description = subTaskModel.Description;
-                    taskEntity.TaskType = subTaskModel.TaskType;
-                    taskEntity.Status = subTaskModel.Status;
-                    taskEntity.Priority = subTaskModel.Priority;
-                    taskEntity.DeadLineDate = subTaskModel.DeadLineDate;
-                    taskEntity.UserId = subTaskModel.AssignedUserId;
-                }
-                else
-                {
-                    // a subtask that exists in the database but not in the incoming model should be deleted,
-                    // a sub task could never assigned to another task,
-                    // so we can safely delete it without worrying about orphaned records
-                    await _taskRepository.Delete(taskEntity.Id);
-                }
-            }
-
+            
         }
 
         public async Task DeleteTask(int taskId)

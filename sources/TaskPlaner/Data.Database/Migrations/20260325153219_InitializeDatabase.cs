@@ -37,6 +37,26 @@ namespace Data.Database.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "EndpointStatisticTable",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Endpoint = table.Column<int>(type: "int", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ElapsedSeconds = table.Column<double>(type: "double", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EndpointStatisticTable", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "LogMessageTable",
                 columns: table => new
                 {
@@ -121,7 +141,6 @@ namespace Data.Database.Migrations
                     Priority = table.Column<int>(type: "int", nullable: false),
                     DeadLineDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    ParentTaskId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "longtext", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -130,12 +149,6 @@ namespace Data.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TaskTable", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TaskTable_TaskTable_ParentTaskId",
-                        column: x => x.ParentTaskId,
-                        principalTable: "TaskTable",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TaskTable_UserTable_UserId",
                         column: x => x.UserId,
@@ -193,11 +206,6 @@ namespace Data.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskTable_ParentTaskId",
-                table: "TaskTable",
-                column: "ParentTaskId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TaskTable_UserId",
                 table: "TaskTable",
                 column: "UserId");
@@ -221,6 +229,9 @@ namespace Data.Database.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "EndpointStatisticTable");
+
             migrationBuilder.DropTable(
                 name: "LogMessageTable");
 
