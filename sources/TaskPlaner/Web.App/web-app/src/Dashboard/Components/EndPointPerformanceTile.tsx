@@ -1,19 +1,12 @@
 import React from "react";
 import { useLocalization } from "../../Hooks/useLocalization";
-import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import { StackedLineChart } from "@mui/icons-material";
 import { IDashboardTileEndpointPerformanceDataSet } from "../Interfaces/IDashboardTileEndpointPerformanceDataSet";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 interface IProps {
   data: IDashboardTileEndpointPerformanceDataSet | null;
-}
-
-interface ILineChartPointData {
-  date: Date;
-  count: number;
-  avg: number;
-  color: string;
 }
 
 const EndPointPerformanceTile: React.FC<IProps> = (props) => {
@@ -48,7 +41,7 @@ const EndPointPerformanceTile: React.FC<IProps> = (props) => {
         return row;
       });
     },
-    [],
+    [getResource],
   );
 
   if (!data) {

@@ -3,6 +3,7 @@ using Data.Accessor.Interfaces;
 using Data.Database;
 using Data.Entities.Administration;
 using Logic.Shared.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Shared.Enums;
 using Shared.Models.Administartion;
 
@@ -37,6 +38,22 @@ namespace Logic.Shared
             });
         }
 
+        public async Task<List<LogMessageModel>> GetLogMessageModels()
+        {
+            var logMessages = await _context.LogMessageTable.ToListAsync();
+
+            return logMessages?.Select(e => new LogMessageModel
+            {
+                Id = e.Id,
+                Message = e.Message,
+                Modul = e.Module,
+                MessageType = e.LogMessageType,
+                ExceptionMessage = e.ExeptionMessage,
+                Stacktrace = e.StackTrace,
+                TimeStamp = e.CreatedAt
+            }).ToList() ?? new List<LogMessageModel>();
+        }
+
         public async Task LogMessageAsync(string message, LogMessageTypeEnum type, Exception? exception = null)
         {
             var logEntry = new LogMessageEntity
@@ -50,9 +67,9 @@ namespace Logic.Shared
                 CreatedAt = DateTime.UtcNow
             };
 
-           await _logRepository.Insert(logEntry, e => e.Id == logEntry.Id);
+            await _logRepository.Insert(logEntry, e => e.Id == logEntry.Id);
 
-           await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteLogMessages(int[] messageIds)

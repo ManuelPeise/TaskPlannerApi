@@ -73,6 +73,8 @@ namespace Logic.Administration
             {
                 await _userUnitOfWork.AddUser(userModel);
 
+                await _logger.LogMessageAsync("New user created with success.", LogMessageTypeEnum.Info);
+
                 await _userUnitOfWork.SaveChangesAsync();
 
 #if !DEBUG
@@ -100,7 +102,8 @@ namespace Logic.Administration
             {
                 await _userUnitOfWork.UpdateUser(userModel, updateCredentials);
                 await _userUnitOfWork.SaveChangesAsync();
-
+                
+                await _logger.LogMessageAsync($"User [{userModel.Id}] updated with success.", LogMessageTypeEnum.Info);
             }
             catch (Exception exception)
             {
@@ -114,6 +117,7 @@ namespace Logic.Administration
             {
                 await _userUnitOfWork.DeleteUser(userId);
                 await _userUnitOfWork.SaveChangesAsync();
+                await _logger.LogMessageAsync($"User [{userId}] deleted with success.", LogMessageTypeEnum.Info);
             }
             catch (Exception exception)
             {

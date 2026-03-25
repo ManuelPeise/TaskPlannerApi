@@ -138,6 +138,7 @@ namespace Logic.Tasks
                 await _taskUnitOfWork.AddTask(taskModel);
 
                 await _taskUnitOfWork.SaveChangesAsync();
+                await _logger.LogMessageAsync($"A new task was created.", LogMessageTypeEnum.Info);
 
                 var tasks = await _taskUnitOfWork.GetAllTasks();
 
@@ -182,6 +183,8 @@ namespace Logic.Tasks
 
                 await _taskUnitOfWork.SaveChangesAsync();
 
+                await _logger.LogMessageAsync($"Task {model.Id} was updated.", LogMessageTypeEnum.Info);
+
                 if (potentialUnassignedUser != task.UserId)
                 {
                     await SendTaskNotifications(task.UserId ?? 0, potentialUnassignedUser ?? 0, task.Id);
@@ -211,6 +214,8 @@ namespace Logic.Tasks
             {
                 await _taskUnitOfWork.UpdateTask(taskModel);
 
+                await _logger.LogMessageAsync($"Task {taskModel.TaskId} was updated.", LogMessageTypeEnum.Info);
+
                 await _taskUnitOfWork.SaveChangesAsync();
             }
             catch (Exception exception)
@@ -225,6 +230,7 @@ namespace Logic.Tasks
             {
                 await _taskUnitOfWork.DeleteTask(id);
                 await _taskUnitOfWork.SaveChangesAsync();
+                await _logger.LogMessageAsync($"Task {id} was deleted.", LogMessageTypeEnum.Info);
 
                 var tasks = await _taskUnitOfWork.GetAllTasks();
 
