@@ -8,6 +8,7 @@
   </Folder>
   <Folder Name="/03 Logic/">
     <Project Path="Logic.Administration/Logic.Administration.csproj" />
+    <Project Path="Logic.Dashboard/Logic.Dashboard.csproj" Id="a5a1f4ff-6b9e-4353-8a93-0e3ec3f8ee18" />
     <Project Path="Logic.Shared/Logic.Shared.csproj" />
     <Project Path="Logic.Tasks/Logic.Tasks.csproj" Id="195e05b9-9f12-4354-8d83-3888dd4b7a5a" />
   </Folder>

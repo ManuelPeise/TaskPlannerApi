@@ -17,8 +17,6 @@ namespace Data.Entities.Tasks
         public int? UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public UserEntity? AssignedUser { get; set; }
-        [ForeignKey(nameof(ParentTaskId))]
-        public int? ParentTaskId { get; set; }
-        public ICollection<TaskEntity> SubTasks { get; set; } = new HashSet<TaskEntity>();
+      
     }
 }

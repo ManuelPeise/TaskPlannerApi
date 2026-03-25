@@ -10,6 +10,7 @@ using Shared.Models.User;
 using Logic.Shared.DI;
 using Shared.Models.Email;
 using Logic.Tasks.DI;
+using Logic.Dashboard.DI;
 
 namespace Core.Api.Bundels
 {
@@ -34,6 +35,7 @@ namespace Core.Api.Bundels
             services.AddSharedServices();
             services.AddAdministrationServices();
             services.AddTaskServices();
+            services.AddDashboardServices();
 
             services.AddControllers();
             services.AddHttpContextAccessor();

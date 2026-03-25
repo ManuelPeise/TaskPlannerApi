@@ -1,5 +1,6 @@
 ﻿using Data.Database.Seeds;
 using Data.Entities.Administration;
+using Data.Entities.Statistics;
 using Data.Entities.Tasks;
 using Data.Entities.User;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +22,6 @@ namespace Data.Database
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<TaskEntity>()
-                .HasMany(t => t.SubTasks)
-                .WithOne()
-                .HasForeignKey(t => t.ParentTaskId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.ApplyConfiguration(new AccessRightsSeed());
         }
 
@@ -34,5 +29,6 @@ namespace Data.Database
         public DbSet<UserEntity> UserTable { get; set; }
         public DbSet<UserCredentialsEntity> UserCredentialsTable { get; set; }
         public DbSet<TaskEntity> TaskTable { get; set; }
+        public DbSet<EndpointStatisticEntity> EndpointStatisticTable { get; set; }
     }
 }

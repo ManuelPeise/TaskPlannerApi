@@ -1,38 +1,37 @@
-﻿using Logic.Dashboard.Interfaces;
+using Logic.Dashboard.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Enums;
-using Shared.Models.Statistics;
-using System.Diagnostics;
 
 namespace Service.Api
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ApiControllerBase: ControllerBase
+    public class ApiControllerBase : ControllerBase
     {
         private readonly IEndpointStatisticService? _endpointStatisticService;
-        private readonly Stopwatch _stopwatch;
+        public DateTime StartTime { get; set; }
+
+        public ApiControllerBase()
+        {
+        }
 
         public ApiControllerBase(IEndpointStatisticService? endpointStatisticService = null) : base()
         {
             _endpointStatisticService = endpointStatisticService;
-            _stopwatch = Stopwatch.StartNew();
         }
 
         [NonAction]
-        public async Task RecordEndpointStatisticAsync(EndpointEnum endpoint)
+        protected async Task RecordEndpointStatisticAsync(EndpointEnum endpoint)
         {
-            _stopwatch.Stop();
-
-            var elapsedMilliSeconsd = _stopwatch.Elapsed.TotalSeconds;
+            var endDate = DateTime.UtcNow;
 
             if (_endpointStatisticService != null)
             {
-                var endpointStatistic = new EndpointStatisticModel
+                var endpointStatistic = new Shared.Models.Statistics.EndpointStatisticModel
                 {
                     Endpoint = endpoint,
                     TimeStamp = DateTime.UtcNow,
-                    RequestTime = elapsedMilliSeconsd
+                    RequestTime = (decimal)(endDate - StartTime).TotalMilliseconds
                 };
 
                 await _endpointStatisticService.AddEndpointStatisticAsync(endpointStatistic);

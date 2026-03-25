@@ -13,6 +13,7 @@ import UserActivationPageContainer from "./UserAdministration/UserActivation/Use
 import { useAuth } from "./Hooks/useAuth";
 import TaskAdministrationPageContainer from "./TaskAdministration/TaskAdministrationPage";
 import TaskDetailsPageContainer from "./TaskAdministration/TaskDetails/TaskDetailsPage";
+import DashboardContainer from "./Dashboard/Dashboard";
 interface IProps {}
 
 const PrivateRoute: React.FC = () => {
@@ -31,7 +32,7 @@ const MainPage: React.FC<IProps> = () => {
       <PageLayout>
         <Routes>
           <Route path="/" element={<PrivateRoute />}>
-            <Route path="/" element={<div>Welcome to the Task Planner!</div>} />
+            <Route path="/dashboard" element={<DashboardContainer />} />
             <Route
               path="/user-administration"
               element={<UserAdministrationPageContainer />}
