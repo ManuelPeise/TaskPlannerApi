@@ -56,6 +56,15 @@ const PageLayout: React.FC<IProps> = (props) => {
         )?.canView,
     });
 
+    items.push({
+      label: getResource("labelMessageLog"),
+      route: "/log",
+      isDisabled:
+        !isAuthenticated ||
+        !currentUser?.accessRights.find((ar) => ar.name === "MessageLog")
+          ?.canView,
+    });
+
     return items;
   }, [isAuthenticated, currentUser, getResource]);
 

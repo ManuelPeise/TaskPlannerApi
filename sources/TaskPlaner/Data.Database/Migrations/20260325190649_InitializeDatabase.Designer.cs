@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20260325153219_InitializeDatabase")]
+    [Migration("20260325190649_InitializeDatabase")]
     partial class InitializeDatabase
     {
         /// <inheritdoc />
@@ -81,6 +81,16 @@ namespace Data.Database.Migrations
                             CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "System",
                             Name = "Dashboard",
+                            UpdatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedBy = "System"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AccessRightGuid = new Guid("c39f8c50-0e0d-4e11-af1a-1333e5909ed8"),
+                            CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "System",
+                            Name = "MessageLog",
                             UpdatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UpdatedBy = "System"
                         });

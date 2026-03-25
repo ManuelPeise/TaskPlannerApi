@@ -34,7 +34,7 @@ export const LoginDialog: React.FC<IProps> = (props) => {
 
   const { model, handleChange, resetForm, handleSubmit } =
     useForm<IAuthenticationRequestModel>(
-      { emailAddress: "admin.user@app.com", password: "Password" },
+      { emailAddress: "", password: "" },
       submitCallback,
     );
 

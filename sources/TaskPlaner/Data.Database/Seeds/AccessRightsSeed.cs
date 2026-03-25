@@ -40,6 +40,16 @@ namespace Data.Database.Seeds
                     CreatedBy = "System",
                     UpdatedAt = createdAt,
                     UpdatedBy = "System"
+                },
+                new AccessRightsEntity
+                {
+                    Id= 4,
+                    AccessRightGuid = Guid.Parse(AccessRightConstants.AccessRightMessageLog),
+                    Name = "MessageLog",
+                    CreatedAt = createdAt,
+                    CreatedBy = "System",
+                    UpdatedAt = createdAt,
+                    UpdatedBy = "System"
                 }
             );
         }

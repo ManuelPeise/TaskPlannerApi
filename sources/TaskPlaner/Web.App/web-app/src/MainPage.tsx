@@ -14,6 +14,7 @@ import { useAuth } from "./Hooks/useAuth";
 import TaskAdministrationPageContainer from "./TaskAdministration/TaskAdministrationPage";
 import TaskDetailsPageContainer from "./TaskAdministration/TaskDetails/TaskDetailsPage";
 import DashboardContainer from "./Dashboard/Dashboard";
+import LogPageContainer from "./Log/LogPage";
 interface IProps {}
 
 const PrivateRoute: React.FC = () => {
@@ -49,6 +50,7 @@ const MainPage: React.FC<IProps> = () => {
               path="/task-administration/details/:taskId"
               element={<TaskDetailsPageContainer />}
             />
+            <Route path="/log" element={<LogPageContainer />} />
             <Route path="/dashboard" element={<div>Dashboard</div>} />
           </Route>
           <Route path="/account" element={<PublicRoute />}>

@@ -85,5 +85,15 @@
   "labelInactive": "Inactive",
   "labelTaskControllerPerformance": "Task Controller Performance",
   "labelUpdateTask": "Update Task",
-  "labelUpdateTaskBase": "Update Task Base"
+  "labelUpdateTaskBase": "Update Task Base",
+  "labelMessageLog": "Message Log",
+  "labelTimeStamp": "Time Stamp",
+  "labelMessageType": "Message Type",
+  "labelMessage": "Message",
+  "labelModule": "Module",
+  "labelClose": "Close",
+  "labelExceptionDetails": "Exception Details",
+  "labelStackTrace": "Stack Trace",
+  "labelExceptionMessage": "Exception Message",
+  "labelToggleLanguage": "Toggle Language"
 }

@@ -202,7 +202,8 @@ namespace Data.Database.Migrations
                 {
                     { 1, new Guid("91cb6210-1990-4e46-94cd-1972fd40e9d3"), new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", "TasksAdministration", new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System" },
                     { 2, new Guid("a15eb59d-e420-4f08-ba99-e7f93948278c"), new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", "UserAdministration", new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System" },
-                    { 3, new Guid("b6f8c1d2-3e4f-4a5b-9c6d-7e8f9a0b1c2d"), new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", "Dashboard", new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System" }
+                    { 3, new Guid("b6f8c1d2-3e4f-4a5b-9c6d-7e8f9a0b1c2d"), new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", "Dashboard", new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System" },
+                    { 4, new Guid("c39f8c50-0e0d-4e11-af1a-1333e5909ed8"), new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", "MessageLog", new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), "System" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -6,7 +6,9 @@ import {
   Grid,
   Menu,
   MenuItem,
+  Switch,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useLocalization } from "../../Hooks/useLocalization";
@@ -21,8 +23,8 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
   const { isAuthenticated, currentUser, onLogout } = useAuth();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { getResource } = useLocalization();
 
+  const { currentLanguage, toggleLanguage, getResource } = useLocalization();
   const navigate = useNavigate();
   const handleLogout = React.useCallback(() => {
     onLogout();
@@ -45,7 +47,7 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
         >
           <Grid
             size="auto"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             sx={{ cursor: "pointer" }}
           >
             <Typography
@@ -56,36 +58,46 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
               {getResource("labelAppName")}
             </Typography>
           </Grid>
-          <Grid size="auto" justifyContent="center">
-            {isPrivate && (
-              <Button
-                color="inherit"
-                onClick={
-                  currentUser?.emailAddress
-                    ? (event) => setAnchorEl(event.currentTarget)
-                    : handleOpenLogin
-                }
+          <Grid display="flex" alignContent="baseline" size="auto">
+            <Grid size="auto" justifyContent="center">
+              <Tooltip title={getResource("labelToggleLanguage")}>
+                <Switch
+                  checked={currentLanguage === "de"}
+                  onChange={toggleLanguage}
+                />
+              </Tooltip>
+            </Grid>
+            <Grid size="auto" justifyContent="center">
+              {isPrivate && (
+                <Button
+                  color="inherit"
+                  onClick={
+                    currentUser?.emailAddress
+                      ? (event) => setAnchorEl(event.currentTarget)
+                      : handleOpenLogin
+                  }
+                >
+                  {currentUser?.emailAddress ??
+                    getResource("common.labelAuthorize")}
+                </Button>
+              )}
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
               >
-                {currentUser?.emailAddress ??
-                  getResource("common.labelAuthorize")}
-              </Button>
-            )}
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={() => setAnchorEl(null)}
-            >
-              {isAuthenticated && (
-                <MenuItem onClick={handleLogout}>
-                  {getResource("common.labelLogout")}
-                </MenuItem>
-              )}
-              {!isAuthenticated && (
-                <MenuItem onClick={handleOpenLogin}>
-                  {getResource("common.labelLogin")}
-                </MenuItem>
-              )}
-            </Menu>
+                {isAuthenticated && (
+                  <MenuItem onClick={handleLogout}>
+                    {getResource("common.labelLogout")}
+                  </MenuItem>
+                )}
+                {!isAuthenticated && (
+                  <MenuItem onClick={handleOpenLogin}>
+                    {getResource("common.labelLogin")}
+                  </MenuItem>
+                )}
+              </Menu>
+            </Grid>
           </Grid>
         </Grid>
       </Toolbar>
