@@ -7,15 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Database
 {
-    public class DatabaseContext: DbContext
+    public class DatabaseContext : DbContext
     {
-        public DatabaseContext(DbContextOptions options): base(options)
-        {
-            
-        }
+        public DatabaseContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        { 
+        {
             modelBuilder.Entity<TaskEntity>()
                 .HasOne(t => t.AssignedUser)
                 .WithMany()
