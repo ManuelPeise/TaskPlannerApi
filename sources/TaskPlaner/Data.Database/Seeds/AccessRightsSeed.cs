@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Database.Seeds
 {
-    internal class AccessRightsSeed : IEntityTypeConfiguration<AccessRightsEntity>
+    public class AccessRightsSeed : IEntityTypeConfiguration<AccessRightsEntity>
     {
         public void Configure(EntityTypeBuilder<AccessRightsEntity> builder)
         {

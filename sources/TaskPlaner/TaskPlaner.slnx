@@ -22,4 +22,8 @@
     <Project Path="Shared.Interfaces/Shared.Interfaces.csproj" />
     <Project Path="Shared.Models/Shared.Models.csproj" />
   </Folder>
+  <Folder Name="/06 UnitTests/">
+    <Project Path="UnitTests.Database/UnitTests.Database.csproj" Id="834388f9-a00f-4581-af1e-22a321bf0d68" />
+    <Project Path="UnitTests.Tests/UnitTests.Tests.csproj" Id="5240a460-3196-4fbe-b38b-60a480633ded" />
+  </Folder>
 </Solution>
