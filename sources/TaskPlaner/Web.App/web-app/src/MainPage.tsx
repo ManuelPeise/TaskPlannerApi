@@ -15,6 +15,7 @@ import TaskAdministrationPageContainer from "./TaskAdministration/TaskAdministra
 import TaskDetailsPageContainer from "./TaskAdministration/TaskDetails/TaskDetailsPage";
 import DashboardContainer from "./Dashboard/Dashboard";
 import LogPageContainer from "./Log/LogPage";
+import Home from "./Home/Home";
 interface IProps {}
 
 const PrivateRoute: React.FC = () => {
@@ -33,6 +34,7 @@ const MainPage: React.FC<IProps> = () => {
       <PageLayout>
         <Routes>
           <Route path="/" element={<PrivateRoute />}>
+            <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<DashboardContainer />} />
             <Route
               path="/user-administration"

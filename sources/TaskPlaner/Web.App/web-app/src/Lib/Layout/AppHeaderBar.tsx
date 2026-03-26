@@ -47,7 +47,7 @@ const AppHeaderBar: React.FC<IProps> = (props) => {
         >
           <Grid
             size="auto"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
             sx={{ cursor: "pointer" }}
           >
             <Typography
