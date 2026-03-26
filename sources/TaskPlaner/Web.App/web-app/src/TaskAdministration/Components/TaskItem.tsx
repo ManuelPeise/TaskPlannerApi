@@ -52,7 +52,7 @@ const TaskItem: React.FC<IProps> = (props) => {
         width: "auto",
         padding: 2,
         minHeight: 150,
-        maxHeight: 150,
+
         boxShadow: 4,
         "&:hover": { transform: "scale(1.01)", boxShadow: 6, cursor: "grab" },
       }}

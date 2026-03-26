@@ -95,5 +95,9 @@
   "labelExceptionDetails": "Exception Details",
   "labelStackTrace": "Stack Trace",
   "labelExceptionMessage": "Exception Message",
-  "labelToggleLanguage": "Toggle Language"
+  "labelToggleLanguage": "Toggle Language",
+  "labelMorningGreeting": "Good morning {User}, nice to see you!",
+  "labelMiddayGreeting": "Hello {User}, nice to see you!",
+  "labelAfternoonGreeting": "Good afternoon {User}, nice to see you!",
+  "labelNiceToSeeYouAgain": "Nice to see you again!"
 }
