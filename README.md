@@ -68,7 +68,9 @@ It is built as a **.NET + React** solution and can serve as a reference for mode
    - Route guards (`PrivateRoute`) rely on `useAuth()` to check whether a token / session is present.
 
 ---
-
+## Testing
+  - there are some unit tests implemented.
+     
 ## Running the Application (Short)
 
 - The API base URL is configured in `appsettings.json` (`ApiOptions.ApiBaseAddress`).
